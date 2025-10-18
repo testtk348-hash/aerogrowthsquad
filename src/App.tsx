@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,15 +19,18 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <LoadingScreen />
-        <div className="flex flex-col min-h-screen">
-          <Header />
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+          <div className="flex flex-col min-h-screen">
+            {!isLoading && <Header />}
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/metrics" element={<Metrics />} />
@@ -39,10 +43,11 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

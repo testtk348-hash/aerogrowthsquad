@@ -1,4 +1,8 @@
 // Mock sensor data and helpers
+import tomatoImg from "@/assets/crops/tomato.jpg";
+import bellPepperImg from "@/assets/crops/bell-pepper.jpg";
+import strawberryImg from "@/assets/crops/strawberry.jpg";
+import cornImg from "@/assets/crops/corn.jpg";
 
 export interface SensorReading {
   ts: string;
@@ -98,7 +102,7 @@ export const cropData = [
   {
     id: "tomato",
     name: "Tomato",
-    image: "/src/assets/crops/tomato.jpg",
+    image: tomatoImg,
     description: "Fast-growing vine; sensitive to high humidity",
     commonPests: ["whiteflies", "aphids", "blight"],
     inspectionAngle: "Leaf underside & stem junction",
@@ -106,7 +110,7 @@ export const cropData = [
   {
     id: "bell-pepper",
     name: "Bell Pepper",
-    image: "/src/assets/crops/bell-pepper.jpg",
+    image: bellPepperImg,
     description: "Warm-season crop; requires consistent moisture",
     commonPests: ["aphids", "spider mites", "thrips"],
     inspectionAngle: "Leaf surfaces and fruit stems",
@@ -114,7 +118,7 @@ export const cropData = [
   {
     id: "strawberry",
     name: "Strawberry",
-    image: "/src/assets/crops/strawberry.jpg",
+    image: strawberryImg,
     description: "Delicate crop; prone to fungal issues",
     commonPests: ["spider mites", "aphids", "powdery mildew"],
     inspectionAngle: "Leaf underside and fruit surface",
@@ -122,7 +126,7 @@ export const cropData = [
   {
     id: "corn",
     name: "Corn (Maize)",
-    image: "/src/assets/crops/corn.jpg",
+    image: cornImg,
     description: "Heavy feeder; check for earworms",
     commonPests: ["corn earworm", "aphids", "armyworm"],
     inspectionAngle: "Leaf whorl and ear silk",

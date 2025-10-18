@@ -3,7 +3,11 @@ import Lottie from "lottie-react";
 import { Progress } from "@/components/ui/progress";
 import growthAnimation from "@/assets/growth-animation.json";
 
-export const LoadingScreen = () => {
+interface LoadingScreenProps {
+  onLoadingComplete: () => void;
+}
+
+export const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [progress, setProgress] = useState(0);
 
@@ -12,7 +16,10 @@ export const LoadingScreen = () => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressTimer);
-          setTimeout(() => setShowWelcome(false), 500);
+          setTimeout(() => {
+            setShowWelcome(false);
+            onLoadingComplete();
+          }, 500);
           return 100;
         }
         return prev + 2;
@@ -20,19 +27,19 @@ export const LoadingScreen = () => {
     }, 50);
 
     return () => clearInterval(progressTimer);
-  }, []);
+  }, [onLoadingComplete]);
 
   if (!showWelcome) return null;
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 transition-opacity duration-500" 
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 transition-opacity duration-500" 
       style={{ 
         backgroundColor: '#043002',
         opacity: progress === 100 ? 0 : 1
       }}
     >
-      <div className="flex flex-col items-center gap-6 sm:gap-8 w-full max-w-2xl">
+      <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 w-full max-w-2xl">
         <div className="w-72 h-72 sm:w-96 sm:h-96">
           <Lottie animationData={growthAnimation} loop={true} />
         </div>
