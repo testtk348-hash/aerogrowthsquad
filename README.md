@@ -25,7 +25,12 @@ An AI-powered plant health monitoring system with real-time pest and disease det
    npm run setup
    ```
 
-2. **Start Development Server**:
+2. **Add ML Model** (Required for Pest Monitoring):
+   - Place your `plant_health_classifier.h5` file in the project root directory
+   - The model file is not included in the repository due to size limitations (127MB)
+   - Contact the project maintainer for the trained model file
+
+3. **Start Development Server**:
    ```bash
    npm run dev
    ```
