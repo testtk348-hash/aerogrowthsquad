@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, TrendingUp } from "lucide-react";
+import { Download, TrendingUp, Share } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,34 +58,119 @@ const Metrics = () => {
 
   const [exportDays, setExportDays] = useState(1);
 
-  const handleExport = (days: number) => {
-    const dataToExport = currentConfig.data.slice(-days * 24);
-    
-    // Generate CSV content
-    const headers = ["Timestamp", "Value", "Unit"];
-    const csvRows = [headers.join(",")];
-    
-    dataToExport.forEach((item) => {
-      const row = [
-        new Date(item.ts).toISOString(),
-        item.value.toFixed(2),
-        currentConfig.unit
-      ];
-      csvRows.push(row.join(","));
-    });
-    
-    const csvContent = csvRows.join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-    
-    toast.success(`${days} day${days > 1 ? 's' : ''} CSV downloaded successfully!`);
+  // Enhanced mobile detection
+  const isMobileDevice = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'iemobile', 'opera mini'];
+    return mobileKeywords.some(keyword => userAgent.includes(keyword)) || 
+           ('ontouchstart' in window) || 
+           (navigator.maxTouchPoints > 0);
+  };
+
+  const handleExport = async (days: number) => {
+    try {
+      const dataToExport = currentConfig.data.slice(-days * 24);
+      
+      // Generate CSV content
+      const headers = ["Timestamp", "Value", "Unit"];
+      const csvRows = [headers.join(",")];
+      
+      dataToExport.forEach((item) => {
+        const row = [
+          new Date(item.ts).toISOString(),
+          item.value.toFixed(2),
+          currentConfig.unit
+        ];
+        csvRows.push(row.join(","));
+      });
+      
+      const csvContent = csvRows.join("\n");
+      const filename = `${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
+      
+      // Check if we're on mobile and use different approach
+      const isMobile = isMobileDevice();
+      
+      if (isMobile) {
+        // Mobile-friendly approach using File System Access API or fallback
+        if ('showSaveFilePicker' in window) {
+          try {
+            // Use File System Access API for modern browsers
+            const fileHandle = await (window as any).showSaveFilePicker({
+              suggestedName: filename,
+              types: [{
+                description: 'CSV files',
+                accept: { 'text/csv': ['.csv'] },
+              }],
+            });
+            
+            const writable = await fileHandle.createWritable();
+            await writable.write(csvContent);
+            await writable.close();
+            
+            toast.success(`${days} day${days > 1 ? 's' : ''} CSV saved successfully!`);
+            return;
+          } catch (err) {
+            // User cancelled or API not supported, fall through to blob method
+          }
+        }
+        
+        // Fallback for mobile: Create blob with proper MIME type and try to open
+        const blob = new Blob([csvContent], { 
+          type: 'text/csv;charset=utf-8;' 
+        });
+        
+        // Try to use navigator.share if available (mobile sharing)
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: 'text/csv' })] })) {
+          try {
+            await navigator.share({
+              files: [new File([blob], filename, { type: 'text/csv' })],
+              title: 'Export CSV Data',
+              text: `${selectedMetric} metrics for ${days} day${days > 1 ? 's' : ''}`
+            });
+            toast.success(`${days} day${days > 1 ? 's' : ''} CSV shared successfully!`);
+            return;
+          } catch (err) {
+            // Share failed, fall through to download
+          }
+        }
+        
+        // Mobile fallback: Open in new tab/window for user to save manually
+        const dataUrl = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
+        const newWindow = window.open(dataUrl, '_blank');
+        
+        if (newWindow) {
+          toast.success(`${days} day${days > 1 ? 's' : ''} CSV opened in new tab. Use "Save As" to download.`);
+        } else {
+          // If popup blocked, use traditional blob download
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          toast.success(`${days} day${days > 1 ? 's' : ''} CSV download initiated!`);
+        }
+      } else {
+        // Desktop approach - traditional blob download
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        toast.success(`${days} day${days > 1 ? 's' : ''} CSV downloaded successfully!`);
+      }
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Failed to export CSV. Please try again.');
+    }
   };
 
   return (
