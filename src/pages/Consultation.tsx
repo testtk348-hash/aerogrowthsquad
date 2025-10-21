@@ -1,15 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, MapPin, Monitor, GraduationCap, ArrowRight } from "lucide-react";
 import consultation1 from "@/assets/consultation1.jpg";
 import consultation2 from "@/assets/consultation2.jpg";
 
 const Consultation = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container py-8 space-y-8">
+      <div className="container py-6 sm:py-8 space-y-8">
         <div className="text-center space-y-4">
-          <h1>Tower Farm Consultation Services</h1>
-          <p className="text-muted-foreground max-w-3xl mx-auto">
-            Expert guidance for your aeroponic farming journey
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl">Consultation Services</h1>
+          <p className="text-muted-foreground max-w-3xl mx-auto text-sm sm:text-base">
+            Comprehensive support and guidance for your aeroponic farming journey
           </p>
         </div>
 
@@ -18,84 +20,244 @@ const Consultation = () => {
           <img 
             src={consultation1} 
             alt="Tower Farm Setup" 
-            className="w-full h-80 object-cover rounded-lg shadow-lg"
+            className="w-full h-60 sm:h-80 object-cover rounded-lg shadow-lg"
           />
           <img 
             src={consultation2} 
             alt="Aeroponic Towers" 
-            className="w-full h-80 object-cover rounded-lg shadow-lg"
+            className="w-full h-60 sm:h-80 object-cover rounded-lg shadow-lg"
           />
         </div>
 
-        {/* Basic Support */}
-        <Card className="card-hover">
-          <CardHeader>
-            <CardTitle>Standard Support Package</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              When someone purchases a Tower Farm, we generally offer full support at no additional cost for small-scale projects. This includes:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-              <li>Step-by-step guidance to assemble the Tower Farm</li>
-              <li>Assistance configuring the irrigation and nutrient dosing system</li>
-              <li>Help producing seedlings and selecting seeds and cultivars</li>
-              <li>Ongoing basic technical support as needed</li>
-            </ul>
-            <p className="text-muted-foreground mt-4">
-              We also publish a complete library of instructional e-books covering all key aspects of vertical farming with aeroponic towers, from seed selection and crop planning to harvesting techniques and nutrient management.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Masterclass */}
-        <Card className="card-hover border-primary">
-          <CardHeader>
-            <CardTitle className="text-primary">Advanced Masterclass Training</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              For those who want to take their knowledge further, we strongly recommend enrolling in our <span className="font-semibold text-foreground">Masterclass</span>. This advanced course delivers over five hours of hands-on video training across 24 chapters, based entirely on real-life experience operating Tower Farms in more than 50 countries.
-            </p>
-            <p className="text-muted-foreground">
-              It is the most comprehensive training resource we have ever developed, ideal for anyone looking to optimize their Tower Farm experience from the start and gain practical, professional-level insights.
-            </p>
-            <p className="text-sm text-muted-foreground italic">
-              *These resources are not included with the Tower Farm purchase but are available separately.
-            </p>
-            <p className="text-muted-foreground mt-4">
-              In most cases, this level of support is more than sufficient to get a small or mid-sized Tower Farm running successfully.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Extended Services */}
-        <Card className="card-hover">
-          <CardHeader>
-            <CardTitle>Extended Off-Site and On-Site Consultation Services</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-muted-foreground">
-              For larger-scale projects, or when the consultation goes beyond the scope of a basic Tower Farm, we offer tailored services that may include on-site involvement. This applies when off-site consultation is required or when land and infrastructure must be assessed in person.
-            </p>
-
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Off-Site Consultation</h3>
-              <p className="text-muted-foreground">Off-site consultation is required when:</p>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
-                <li>The project demands significant preparation ahead of the installation</li>
-                <li>Strategic planning or infrastructure development is involved (including potential custom system design)</li>
-                <li>Ongoing support and monitoring are required after launching the Tower Farm, particularly for larger operations</li>
-                <li>Technical consultation, document review, and system validation are required</li>
-                <li>Custom research or troubleshooting must be conducted</li>
-                <li>Ongoing team meetings, video calls, and operational support are part of the process</li>
-              </ul>
-              <p className="text-muted-foreground mt-4">
-                In such cases, we operate under a <span className="font-semibold text-foreground">retainer-based model</span> to ensure availability and to prioritize the project.
+        {/* Service Cards in New Order */}
+        <div className="space-y-6">
+          {/* 1. Standard Support Package */}
+          <Card className="card-hover border-l-4 border-l-primary">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Standard Support Package</CardTitle>
+                  <Badge variant="secondary" className="mt-1">Included with Purchase</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                When you purchase a Tower Farm, we provide comprehensive support at no additional cost for small-scale projects. Our standard package includes:
               </p>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Step-by-step assembly guidance
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Irrigation system configuration
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Nutrient dosing system setup
+                  </li>
+                </ul>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Seedling production assistance
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Seed and cultivar selection
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    Ongoing technical support
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Bonus:</strong> Access to our complete library of instructional e-books covering all aspects of vertical farming, from seed selection to harvesting techniques and nutrient management.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 2. On-Site Consultation */}
+          <Card className="card-hover border-l-4 border-l-secondary">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-secondary/10 rounded-lg">
+                  <MapPin className="h-6 w-6 text-secondary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">On-Site Consultation</CardTitle>
+                  <Badge variant="outline" className="mt-1">Premium Service</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                For larger-scale projects requiring physical presence and hands-on assessment, we provide comprehensive on-site consultation services.
+              </p>
+              
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">On-site services include:</h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Land and infrastructure assessment
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Custom system design and planning
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Installation supervision
+                    </li>
+                  </ul>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Team training and knowledge transfer
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Quality assurance and validation
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-secondary mt-0.5 flex-shrink-0" />
+                      Operational optimization
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3. Off-Site Consultation */}
+          <Card className="card-hover border-l-4 border-l-accent">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-lg">
+                  <Monitor className="h-6 w-6 text-accent" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Off-Site Consultation</CardTitle>
+                  <Badge variant="outline" className="mt-1">Remote Support</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                Comprehensive remote consultation services for projects requiring strategic planning, ongoing support, and technical expertise without physical presence.
+              </p>
+              
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Off-site consultation is ideal when:</h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      Strategic planning and preparation
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      Technical consultation and review
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      System validation and optimization
+                    </li>
+                  </ul>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      Ongoing monitoring and support
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      Custom research and troubleshooting
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                      Regular team meetings and calls
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-accent/5 p-4 rounded-lg border border-accent/20">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Note:</strong> We operate under a retainer-based model to ensure availability and prioritize your project needs.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 4. Future Plans - Advanced Masterclass and Training */}
+          <Card className="card-hover border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/50 to-purple-50/50">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <GraduationCap className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Future Plans - Advanced Masterclass & Training</CardTitle>
+                  <Badge className="mt-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white">Coming Soon</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                We're developing an advanced masterclass program that will deliver comprehensive, hands-on training based on real-world experience from Tower Farm operations across 50+ countries.
+              </p>
+              
+              <div className="space-y-4">
+                <h4 className="font-semibold text-foreground">Planned features include:</h4>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      5+ hours of hands-on video training
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      24 comprehensive training chapters
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      Real-world case studies and examples
+                    </li>
+                  </ul>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      Professional-level insights and techniques
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      Optimization strategies and best practices
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <ArrowRight className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      Certification and continuing education
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    <strong>Stay tuned:</strong> This comprehensive training resource will be ideal for anyone looking to optimize their Tower Farm experience from the start and gain professional-level expertise.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

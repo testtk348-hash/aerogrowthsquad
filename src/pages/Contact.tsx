@@ -45,8 +45,9 @@ const Contact = () => {
 
   const interestOptions = [
     "Standard support package",
-    "Advanced masterclass training",
-    "Extended off site and on site consultation services",
+    "On site consultation",
+    "Off site consultation", 
+    "Future plans - advanced masterclass and training",
     "Other (please specify)"
   ];
 
