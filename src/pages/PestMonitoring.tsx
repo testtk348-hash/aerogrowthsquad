@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Upload, Camera, Scan, History, Info, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload, Camera, Scan, History, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { CropCard } from "@/components/pest/CropCard";
 import { UploadModal, AnalysisResult } from "@/components/pest/UploadModal";
 import { ResultsModal } from "@/components/pest/ResultsModal";

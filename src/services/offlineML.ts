@@ -107,7 +107,7 @@ class OfflinePlantDiseaseModel {
           activation: 'relu',
           padding: 'same'
         }),
-        tf.layers.globalAveragePooling2d(), // More efficient than flatten + dense
+        tf.layers.globalAveragePooling2d({}), // More efficient than flatten + dense
         tf.layers.dense({ units: 64, activation: 'relu' }), // Smaller dense layer
         tf.layers.dropout({ rate: 0.3 }), // Reduced dropout
         tf.layers.dense({ 
