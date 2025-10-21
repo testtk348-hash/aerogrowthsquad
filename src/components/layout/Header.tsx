@@ -136,105 +136,110 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Enhanced Mobile Menu with Glass Morphism */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50">
-          {/* Enhanced Backdrop with Blur */}
-          <div 
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          
-          {/* Enhanced Mobile Menu Panel */}
-          <div className="absolute top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-background/95 backdrop-blur-xl shadow-[var(--shadow-lg)] border-l border-border/50 animate-in slide-in-from-right duration-300">
-            
-            {/* Enhanced Header */}
-            <div className="flex items-center justify-between p-5 border-b border-border/50 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-[var(--shadow-md)]">
-                  <Leaf className="h-5 w-5 text-primary-foreground" />
+      {/* Enhanced Mobile Menu with Smooth Animations */}
+      <div 
+        className={`lg:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Enhanced Backdrop with Blur */}
+        <div 
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+        
+        {/* Enhanced Mobile Menu Panel */}
+        <div 
+          className={`absolute top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-background/95 backdrop-blur-xl shadow-[var(--shadow-lg)] border-l border-border/50 transform transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Enhanced Header */}
+          <div className="flex items-center justify-between p-5 border-b border-border/50 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-[var(--shadow-md)]">
+                <Leaf className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <span className="font-bold text-foreground">Navigation</span>
+                <p className="text-xs text-muted-foreground">Choose a page</p>
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setMobileMenuOpen(false)}
+              className="h-10 w-10 hover:bg-muted/50 transition-colors duration-200 group"
+            >
+              <X className="h-5 w-5 text-foreground transition-transform duration-200 group-hover:rotate-90" />
+            </Button>
+          </div>
+
+          {/* Enhanced Navigation */}
+          <div className="flex-1 overflow-y-auto p-5 mobile-scroll overscroll-contain">
+            <nav className="space-y-1.5">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`group flex items-center gap-4 px-4 py-3.5 rounded-lg font-medium transition-all duration-200 mobile-touch-target ${
+                      isActive 
+                        ? 'gradient-primary text-primary-foreground shadow-[var(--shadow-md)]' 
+                        : 'text-foreground hover:bg-muted/50 hover:shadow-[var(--shadow-sm)]'
+                    }`}
+                  >
+                    <Icon className={`h-5 w-5 transition-transform duration-200 ${!isActive && 'group-hover:scale-110'}`} />
+                    <span className="text-base">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Enhanced User Section */}
+            <div className="mt-6 pt-6 border-t border-border/50">
+              <div className="flex items-center gap-3 mb-4 p-3.5 bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg border border-border/30 shadow-[var(--shadow-sm)]">
+                <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center shadow-[var(--shadow-sm)]">
+                  <User className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <div>
-                  <span className="font-bold text-foreground">Navigation</span>
-                  <p className="text-xs text-muted-foreground">Choose a page</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-foreground truncate">{userRole}</p>
+                  <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={() => setMobileMenuOpen(false)}
-                className="h-10 w-10 hover:bg-muted/50 transition-colors duration-200 group"
-              >
-                <X className="h-5 w-5 text-foreground transition-transform duration-200 group-hover:rotate-90" />
-              </Button>
-            </div>
-
-            {/* Enhanced Navigation */}
-            <div className="flex-1 overflow-y-auto p-5 mobile-scroll">
-              <nav className="space-y-1.5">
-                {navigation.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`group flex items-center gap-4 px-4 py-3.5 rounded-lg font-medium transition-all duration-200 mobile-touch-target ${
-                        isActive 
-                          ? 'gradient-primary text-primary-foreground shadow-[var(--shadow-md)]' 
-                          : 'text-foreground hover:bg-muted/50 hover:shadow-[var(--shadow-sm)]'
-                      }`}
-                    >
-                      <Icon className={`h-5 w-5 transition-transform duration-200 ${!isActive && 'group-hover:scale-110'}`} />
-                      <span className="text-base">{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* Enhanced User Section */}
-              <div className="mt-6 pt-6 border-t border-border/50">
-                <div className="flex items-center gap-3 mb-4 p-3.5 bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg border border-border/30 shadow-[var(--shadow-sm)]">
-                  <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center shadow-[var(--shadow-sm)]">
-                    <User className="h-5 w-5 text-primary-foreground" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-foreground truncate">{userRole}</p>
-                    <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-1">
-                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="justify-start w-full h-12 hover:bg-muted/50 hover:shadow-[var(--shadow-sm)] transition-all duration-200 group">
-                      <User className="h-4 w-4 mr-3 text-primary transition-transform duration-200 group-hover:scale-110" />
-                      <span className="font-medium">Profile</span>
-                    </Button>
-                  </Link>
-                  <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="justify-start w-full h-12 hover:bg-muted/50 hover:shadow-[var(--shadow-sm)] transition-all duration-200 group">
-                      <Settings className="h-4 w-4 mr-3 text-primary transition-transform duration-200 group-hover:scale-110" />
-                      <span className="font-medium">Settings</span>
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="ghost" 
-                    className="justify-start w-full h-12 text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-200 group"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      logout();
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-3 transition-transform duration-200 group-hover:translate-x-1" />
-                    <span className="font-medium">Sign Out</span>
+              
+              <div className="space-y-1">
+                <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="justify-start w-full h-12 hover:bg-muted/50 hover:shadow-[var(--shadow-sm)] transition-all duration-200 group">
+                    <User className="h-4 w-4 mr-3 text-primary transition-transform duration-200 group-hover:scale-110" />
+                    <span className="font-medium">Profile</span>
                   </Button>
-                </div>
+                </Link>
+                <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="justify-start w-full h-12 hover:bg-muted/50 hover:shadow-[var(--shadow-sm)] transition-all duration-200 group">
+                    <Settings className="h-4 w-4 mr-3 text-primary transition-transform duration-200 group-hover:scale-110" />
+                    <span className="font-medium">Settings</span>
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start w-full h-12 text-destructive hover:text-destructive hover:bg-destructive/10 transition-all duration-200 group"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                >
+                  <LogOut className="h-4 w-4 mr-3 transition-transform duration-200 group-hover:translate-x-1" />
+                  <span className="font-medium">Sign Out</span>
+                </Button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };

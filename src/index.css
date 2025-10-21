@@ -337,6 +337,31 @@ All colors MUST be HSL.
     border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
 
+  /* Mobile menu animations - prevent glitchy behavior */
+  .mobile-menu-wrapper {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+  }
+
+  .mobile-menu-panel {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  /* Smooth scrolling for mobile menu */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+
   /* Status bar and mobile APK fixes */
   @media (max-width: 768px) {
 
