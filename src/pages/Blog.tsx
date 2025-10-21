@@ -10,6 +10,12 @@ import team2 from "@/assets/blog-team2.jpg";
 import consultation from "@/assets/blog-consultation.jpg";
 import tower1 from "@/assets/blog-tower1.jpg";
 import tower2 from "@/assets/blog-tower2.jpg";
+import bhoomipoojaTeam from "@/assets/blog-bhoomi-pooja-team.jpg";
+import bhoomipooja1 from "@/assets/blog-bhoomi-pooja-1.jpg";
+import bhoomipooja2 from "@/assets/blog-bhoomi-pooja-2.jpg";
+import bhoomipooja3 from "@/assets/blog-bhoomi-pooja-3.jpg";
+import bhoomipooja4 from "@/assets/blog-bhoomi-pooja-4.jpg";
+import bhoomipooja5 from "@/assets/blog-bhoomi-pooja-5.jpg";
 
 interface BlogPost {
   id: number;
@@ -108,7 +114,46 @@ As we prepare to expand our operations, the experts shared valuable lessons abou
 
 These knowledge-sharing sessions are instrumental in our journey toward becoming a leading aeroponic farming operation. The insights gained will be implemented in our next growing cycle, and we're excited to measure the improvements in both yield and quality.`,
     },
-  ];
+    {
+      id: 4,
+      title: "Bhoomi Pooja: A Sacred Beginning to Our Vertical Farming Journey",
+      date: "September 1, 2025",
+      category: "Milestone",
+      coverImage: bhoomipoojaTeam,
+      images: [bhoomipoojaTeam, bhoomipooja1, bhoomipooja2, bhoomipooja3, bhoomipooja4, bhoomipooja5],
+      readTime: "5 min read",
+      excerpt: "With immense joy, we share a special milestone in our journey – the successful Bhoomi Pooja for our Vertical Tower Farming - Aeroponics Project. This initiative is about empowering the Self-Help Group (SHG) in Poonthandalam and promoting sustainable farming practices.",
+      content: `With immense joy, we share a special milestone in our journey – the successful Bhoomi Pooja for our Vertical Tower Farming - Aeroponics Project. This initiative is not just about technology but about empowering the Self-Help Group (SHG) in Poonthandalam, increasing crop yield, and promoting sustainable farming practices through real-time monitoring.
+
+This project began in September and has been a journey of learning, innovation, and teamwork. Today, as we take this significant step, we do so with hope and determination for its successful completion.
+
+Project Vision:
+Our Vertical Tower Farming project represents a revolutionary approach to agriculture, combining traditional farming wisdom with cutting-edge aeroponic technology. The goal is to create a sustainable, high-yield farming system that can be replicated and scaled across rural communities.
+
+Community Impact:
+The project is designed to directly benefit the Self-Help Group (SHG) in Poonthandalam by:
+• Providing training in modern farming techniques
+• Increasing crop yield through optimized growing conditions
+• Creating sustainable income opportunities
+• Promoting water-efficient farming practices
+• Establishing a model for community-driven agricultural innovation
+
+Acknowledgments:
+
+We extend our deepest gratitude to IEEE, SEC IEEE Student Branch - Sairam Institutions for providing this incredible opportunity, fostering student innovation, and supporting impactful projects like ours.
+
+A heartfelt thanks to our CEO Sai Prakash LeoMuthu for his unwavering encouragement and our Principal Raja J for providing the necessary resources and constant support to make this possible.
+
+A special thanks to UmaMaheswaran SK sir for his exceptional mentorship, guiding us at every step of this journey. We also sincerely thank Thanuja Balasundaram and Prabhu V for their invaluable guidance and motivation, which have played a crucial role in shaping our progress.
+
+We are also grateful to Dr. Thamilselvi Ravi and Dr. Brindha Saminathan for their support and to our guide, and S Sumathi mam for her guidance throughout this project.
+
+Looking Forward:
+This Bhoomi Pooja marks not just the beginning of construction, but the start of a transformative journey that will impact lives, promote sustainability, and demonstrate the power of technology in service of community development.
+
+The sacred ceremony reminds us that while we embrace modern technology, we remain rooted in our cultural values and commitment to the land and its people. This project will serve as a beacon of hope and innovation for sustainable agriculture in rural India.`,
+    },
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleViewMore = (post: BlogPost) => {
     setSelectedPost(post);
