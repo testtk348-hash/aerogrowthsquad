@@ -1,7 +1,9 @@
-import { Menu, Settings, User, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Menu, Settings, User, Instagram, Linkedin, Youtube, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 
 const navigation = [
@@ -16,6 +18,7 @@ const navigation = [
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
+  const { logout, userRole, userEmail } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -59,11 +62,46 @@ export const Header = () => {
               <Settings className="h-5 w-5" />
             </Button>
           </Link>
-          <Link to="/profile">
-            <Button variant="ghost" size="icon" className="hidden md:flex">
-              <User className="h-5 w-5" />
-            </Button>
-          </Link>
+          
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hidden md:flex">
+                <User className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium">{userRole}</p>
+                <p className="text-xs text-muted-foreground">{userEmail}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="w-full">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings" className="w-full">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => {
+                  if (confirm("Are you sure you want to sign out?")) {
+                    logout();
+                  }
+                }} 
+                className="text-red-600 focus:text-red-600"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild className="md:hidden">
@@ -96,6 +134,27 @@ export const Header = () => {
                       Profile
                     </Button>
                   </Link>
+                  
+                  <div className="border-t pt-4 mt-4">
+                    <div className="mb-4 px-2">
+                      <p className="text-sm font-medium text-foreground">{userRole}</p>
+                      <p className="text-xs text-muted-foreground">{userEmail}</p>
+                    </div>
+                    
+                    <Button 
+                      variant="ghost" 
+                      className="justify-start w-full text-red-600 hover:text-red-600 hover:bg-red-50"
+                      onClick={() => {
+                        setOpen(false);
+                        if (confirm("Are you sure you want to sign out?")) {
+                          logout();
+                        }
+                      }}
+                    >
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Sign Out
+                    </Button>
+                  </div>
                   
                   <div className="border-t pt-4 mt-4">
                     <p className="text-sm font-medium mb-3 text-muted-foreground">Follow Us</p>
