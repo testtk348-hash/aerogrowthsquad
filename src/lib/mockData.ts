@@ -111,9 +111,9 @@ export const cropData = [
     id: "bell-pepper",
     name: "Bell Pepper",
     image: bellPepperImg,
-    description: "Warm-season crop; requires consistent moisture",
-    commonPests: ["aphids", "spider mites", "thrips"],
-    inspectionAngle: "Leaf surfaces and fruit stems",
+    description: "Heat-loving crop; watch for bacterial spot",
+    commonPests: ["aphids", "thrips", "bacterial spot", "pepper weevil"],
+    inspectionAngle: "Leaf surface and fruit development",
   },
   {
     id: "strawberry",

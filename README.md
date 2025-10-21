@@ -1,73 +1,115 @@
-# Welcome to your Lovable project
+# Plant Health Monitoring System
 
-## Project info
+An AI-powered plant health monitoring system with real-time pest and disease detection using machine learning.
+
+## Features
+
+- **AI Plant Health Analysis**: Upload plant leaf images for automated health assessment
+- **Multi-Crop Support**: Supports Tomato, Strawberry, and Corn analysis
+- **Real-time Results**: Get instant health predictions with confidence scores
+- **Image Validation**: Automatic validation to ensure appropriate plant images
+- **Responsive UI**: Modern, mobile-friendly interface built with React and Tailwind CSS
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- Python (v3.8 or higher)
+- pip (Python package manager)
+
+## Quick Start
+
+1. **Clone and Setup**:
+   ```bash
+   git clone <repository-url>
+   cd <project-directory>
+   npm run setup
+   ```
+
+2. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+This will start both the frontend (React) and backend (Flask) servers concurrently.
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+
+## Project Structure
+
+```
+├── src/                    # React frontend
+│   ├── components/pest/    # Pest monitoring components
+│   ├── pages/             # Application pages
+│   └── lib/               # Utilities and mock data
+├── backend/               # Flask backend
+│   ├── app.py            # Main Flask application
+│   ├── requirements.txt  # Python dependencies
+│   └── README.md         # Backend documentation
+├── plant_health_classifier.h5  # ML model file
+└── package.json          # Node.js dependencies
+```
+
+## Usage
+
+1. **Navigate to Pest Monitoring**: Go to the pest monitoring page
+2. **Select Crop Type**: Choose from Tomato, Strawberry, or Corn
+3. **Upload Image**: Follow the guidelines and upload a clear leaf image
+4. **Get Results**: Receive AI-powered health analysis with recommendations
+
+### Image Upload Guidelines
+
+For best results:
+- ✅ Clear, well-lit leaf images
+- ✅ Focus on leaf surfaces (top/bottom)
+- ✅ Minimum 224x224 pixels resolution
+- ✅ JPG, PNG, or WebP format (max 8MB)
+
+Avoid:
+- ❌ Blurry or low-quality images
+- ❌ Images with hands or tools visible
+- ❌ Fruits or flowers (leaves only)
+- ❌ Very dark or overexposed images
+
+## API Endpoints
+
+- `GET /health` - Backend health check
+- `POST /analyze` - Analyze plant image
+
+## Development
+
+### Frontend Only
+```bash
+npm run dev:frontend
+```
+
+### Backend Only
+```bash
+npm run dev:backend
+```
+
+### Build for Production
+```bash
+npm run build
+```
+
+## Technologies Used
+
+- **Frontend**: React, TypeScript, Tailwind CSS, Vite
+- **Backend**: Flask, TensorFlow/Keras, PIL
+- **ML Model**: Custom trained plant health classifier
+- **UI Components**: Radix UI, Lucide React
+
+## Troubleshooting
+
+1. **Backend not starting**: Ensure Python and pip are installed, run `npm run setup`
+2. **Model not loading**: Verify `plant_health_classifier.h5` is in the root directory
+3. **Analysis failing**: Check that the backend server is running on port 5000
+
+---
+
+## Original Lovable Project Info
 
 **URL**: https://lovable.dev/projects/86b7e374-b0ca-41b0-94a4-45504c03fee4
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/86b7e374-b0ca-41b0-94a4-45504c03fee4) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/86b7e374-b0ca-41b0-94a4-45504c03fee4) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project was built with Vite, TypeScript, React, shadcn-ui, and Tailwind CSS.
