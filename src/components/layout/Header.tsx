@@ -11,6 +11,7 @@ const navigation = [
   { name: "Consultation", href: "/consultation" },
   { name: "Blog", href: "/blog" },
   { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export const Header = () => {
@@ -38,17 +39,17 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/aerogrowthsquad?igsh=MWJoanBrbjl1dm92Zw==" target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Instagram className="h-5 w-5" />
             </Button>
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/aerogrowthsquad" target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Linkedin className="h-5 w-5" />
             </Button>
           </a>
-          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/channel/UCQHPN7LR0lDppS0Vn5PJBhQ" target="_blank" rel="noopener noreferrer">
             <Button variant="ghost" size="icon" className="hidden md:flex">
               <Youtube className="h-5 w-5" />
             </Button>
@@ -95,6 +96,27 @@ export const Header = () => {
                       Profile
                     </Button>
                   </Link>
+                  
+                  <div className="border-t pt-4 mt-4">
+                    <p className="text-sm font-medium mb-3 text-muted-foreground">Follow Us</p>
+                    <div className="flex gap-2">
+                      <a href="https://www.instagram.com/aerogrowthsquad?igsh=MWJoanBrbjl1dm92Zw==" target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon">
+                          <Instagram className="h-5 w-5" />
+                        </Button>
+                      </a>
+                      <a href="https://www.linkedin.com/in/aerogrowthsquad" target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon">
+                          <Linkedin className="h-5 w-5" />
+                        </Button>
+                      </a>
+                      <a href="https://www.youtube.com/channel/UCQHPN7LR0lDppS0Vn5PJBhQ" target="_blank" rel="noopener noreferrer">
+                        <Button variant="ghost" size="icon">
+                          <Youtube className="h-5 w-5" />
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </nav>
             </SheetContent>

@@ -15,7 +15,7 @@ export const Footer = () => {
               Documentation
             </Link>
             <a
-              href="mailto:contact@aeroponics.example"
+              href="mailto:aerogrowthsquad@gmail.com"
               className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
             >
               <Mail className="h-4 w-4" />
@@ -23,17 +23,17 @@ export const Footer = () => {
             </a>
           </div>
           <div className="flex items-center gap-2">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.instagram.com/aerogrowthsquad?igsh=MWJoanBrbjl1dm92Zw==" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon">
                 <Instagram className="h-4 w-4" />
               </Button>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.linkedin.com/in/aerogrowthsquad" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon">
                 <Linkedin className="h-4 w-4" />
               </Button>
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/channel/UCQHPN7LR0lDppS0Vn5PJBhQ" target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon">
                 <Youtube className="h-4 w-4" />
               </Button>

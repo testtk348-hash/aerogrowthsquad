@@ -12,6 +12,7 @@ import Metrics from "./pages/Metrics";
 import PestMonitoring from "./pages/PestMonitoring";
 import Consultation from "./pages/Consultation";
 import Blog from "./pages/Blog";
+import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
@@ -37,6 +38,7 @@ const App = () => {
             <Route path="/pest-monitoring" element={<PestMonitoring />} />
             <Route path="/consultation" element={<Consultation />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/about" element={<About />} />
