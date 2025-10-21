@@ -35,6 +35,39 @@ An AI-powered plant health monitoring system with real-time pest and disease det
    npm run dev
    ```
 
+## Mobile App (APK) Build
+
+To build this application as an Android APK:
+
+1. **Setup Android Development Environment**:
+   - Install Android Studio
+   - Set up Android SDK
+   - Configure environment variables
+   - See `ANDROID_SETUP.md` for detailed instructions
+
+2. **Build APK**:
+   ```bash
+   # Quick build (debug APK)
+   build-apk.bat
+   
+   # Or manual build
+   npm run build:mobile
+   cd android
+   gradlew assembleDebug
+   ```
+
+3. **APK Location**:
+   - Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk`
+   - Install on Android device or emulator
+
+### Mobile Features:
+- ✅ Native camera integration for pest monitoring
+- ✅ Mobile-optimized CSV export and sharing
+- ✅ Touch-friendly responsive design
+- ✅ Offline capabilities
+- ✅ All web features fully functional
+   ```
+
 This will start both the frontend (React) and backend (Flask) servers concurrently.
 
 - Frontend: http://localhost:5173

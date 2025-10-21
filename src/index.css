@@ -1,6 +1,11 @@
+/* stylelint-disable at-rule-no-unknown -- Tailwind CSS directives */
 @tailwind base;
+/* Tailwind's base styles */
 @tailwind components;
+/* Tailwind's component classes */
 @tailwind utilities;
+/* Tailwind's utility classes */
+/* stylelint-enable at-rule-no-unknown */
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -184,5 +189,1500 @@ All colors MUST be HSL.
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
+  }
+
+  /* Mobile app specific styles */
+  .mobile-app {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .mobile-app * {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Platform specific styles */
+  .platform-android {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .platform-ios {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .mobile-app {
+      font-size: 16px;
+      /* Prevent zoom on iOS */
+    }
+
+    .mobile-app input,
+    .mobile-app textarea,
+    .mobile-app select {
+      font-size: 16px;
+      /* Prevent zoom on iOS */
+    }
+  }
+
+  /* Safe area handling for mobile devices */
+  .mobile-app {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Safe area utilities */
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+
+  .pb-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  .pl-safe-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .pr-safe-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Mobile touch optimizations */
+  .mobile-touch-target {
+    min-height: 44px;
+    /* iOS recommended touch target size */
+    min-width: 44px;
+  }
+
+  /* Mobile button optimizations */
+  .mobile-button {
+    padding: 12px 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 8px;
+    touch-action: manipulation;
+  }
+
+  /* Mobile modal optimizations */
+  .mobile-modal {
+    max-height: 90vh;
+    margin: 5vh auto;
+    border-radius: 16px 16px 0 0;
+  }
+
+  /* Mobile toast optimizations */
+  .mobile-toast {
+    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 90vw;
+    margin: 0 auto;
+  }
+
+  .mobile-toast-optimized {
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+    max-width: 90vw !important;
+    margin: 0 auto !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  /* Prevent text selection on mobile */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Mobile scroll optimizations */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbars on mobile */
+  @media (max-width: 768px) {
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* Mobile header optimizations */
+  .mobile-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Mobile footer optimizations */
+  .mobile-footer {
+    background: rgba(248, 250, 252, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Status bar and mobile APK fixes */
+  @media (max-width: 768px) {
+
+    /* Fix green line and layout issues */
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden;
+      height: 100%;
+      background: #ffffff !important;
+      border: none !important;
+      outline: none !important;
+    }
+
+    body.mobile-app {
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden;
+      background: #ffffff !important;
+      border: none !important;
+      outline: none !important;
+      /* Remove any potential status bar artifacts */
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    #root {
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #ffffff !important;
+      border: none !important;
+      outline: none !important;
+    }
+
+    /* Remove any unwanted borders, outlines, or artifacts */
+    * {
+      box-sizing: border-box;
+      outline: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    /* Completely remove any potential green artifacts */
+    *::before,
+    *::after {
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+    }
+
+    /* Mobile header optimizations - ensure proper positioning */
+    .mobile-header {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1000 !important;
+      background: rgba(255, 255, 255, 0.98) !important;
+      backdrop-filter: blur(12px) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+      border-top: none !important;
+      padding-top: env(safe-area-inset-top, 0px) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+      height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    /* Mobile hamburger menu button visibility fixes */
+    .mobile-header button[data-state] {
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      color: #1f2937 !important;
+    }
+
+    .mobile-header button[data-state]:hover {
+      background: rgba(0, 0, 0, 0.05) !important;
+      color: #059669 !important;
+    }
+
+    /* Mobile menu icon visibility */
+    .mobile-header svg {
+      color: #1f2937 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+
+    /* Adjust main content for fixed header */
+    .mobile-app .flex.flex-col.min-h-screen {
+      padding-top: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    /* Toast positioning for mobile - positioned below header */
+    .mobile-toast-optimized {
+      position: fixed !important;
+      top: calc(70px + env(safe-area-inset-top, 0px)) !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 9999 !important;
+      max-width: 90vw !important;
+      margin: 0 !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Ensure no green lines or artifacts anywhere */
+    .mobile-app *,
+    .mobile-app *::before,
+    .mobile-app *::after {
+      border-color: transparent !important;
+    }
+
+    .mobile-app *:not(.border):not([class*="border-"]):not([class*="ring-"]) {
+      border: none !important;
+    }
+
+    /* Remove any potential webkit artifacts */
+    .mobile-app input,
+    .mobile-app textarea,
+    .mobile-app select,
+    .mobile-app button {
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      border: none !important;
+      outline: none !important;
+    }
+
+    /* Status bar area protection */
+    .mobile-app::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-top, 0px);
+      background: #ffffff !important;
+      z-index: 9998;
+      border: none !important;
+    }
+  }
+
+  /* Additional mobile optimizations */
+  @media (max-width: 768px) {
+
+    /* Prevent zoom on input focus */
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+      transform-origin: left top;
+      transition: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+    }
+
+    /* Optimize touch targets */
+    button,
+    a,
+    [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    /* Smooth scrolling */
+    * {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    /* Mobile viewport optimizations */
+    .mobile-app {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+    }
+
+    /* Fix for mobile navigation visibility */
+    .mobile-app nav,
+    .mobile-app header {
+      visibility: visible !important;
+      opacity: 1 !important;
+      display: flex !important;
+    }
+
+    /* Ensure proper stacking context */
+    .mobile-app header {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1000 !important;
+    }
+
+    /* Mobile-specific toast container */
+    [data-sonner-toaster] {
+      top: calc(70px + env(safe-area-inset-top, 0px)) !important;
+      position: fixed !important;
+      z-index: 9999 !important;
+    }
+
+    /* Success toast specific styling for mobile */
+    [data-sonner-toast][data-type="success"] {
+      background: rgba(34, 197, 94, 0.95) !important;
+      color: white !important;
+      border: 1px solid rgba(34, 197, 94, 0.3) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    /* Error toast specific styling for mobile */
+    [data-sonner-toast][data-type="error"] {
+      background: rgba(239, 68, 68, 0.95) !important;
+      color: white !important;
+      border: 1px solid rgba(239, 68, 68, 0.3) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    /* Mobile Sheet/Menu specific fixes */
+    [data-radix-dialog-overlay] {
+      z-index: 9998 !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    [data-radix-dialog-content] {
+      z-index: 9999 !important;
+      background: #ffffff !important;
+      border: none !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Mobile hamburger menu trigger button */
+    .mobile-app button[data-state] {
+      min-height: 44px !important;
+      min-width: 44px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: rgba(255, 255, 255, 0.9) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      border-radius: 8px !important;
+      color: #1f2937 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+    }
+
+    .mobile-app button[data-state]:active {
+      background: rgba(0, 0, 0, 0.1) !important;
+      transform: scale(0.95) !important;
+    }
+
+    /* Mobile menu content styling */
+    .mobile-app [data-radix-dialog-content] nav {
+      padding: 20px !important;
+      background: #ffffff !important;
+    }
+
+    .mobile-app [data-radix-dialog-content] nav a {
+      display: block !important;
+      padding: 12px 16px !important;
+      color: #1f2937 !important;
+      text-decoration: none !important;
+      border-radius: 8px !important;
+      margin-bottom: 8px !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+      touch-action: manipulation !important;
+    }
+
+    .mobile-app [data-radix-dialog-content] nav a:hover,
+    .mobile-app [data-radix-dialog-content] nav a:active {
+      background: rgba(5, 150, 105, 0.1) !important;
+      color: #059669 !important;
+    }
+  }
+}
+
+/* Complete Mobile Optimization & Smooth Animations */
+@media (max-width: 1024px) {
+
+  /* Global mobile optimizations */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+
+  input,
+  textarea,
+  [contenteditable] {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+  }
+
+  /* Smooth scrolling for all elements */
+  * {
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Body optimizations */
+  body {
+    overscroll-behavior: none !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+
+  /* Header optimizations */
+  header {
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+  }
+
+  /* Ensure header doesn't overlay content */
+  main {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  /* Button optimizations */
+  button,
+  [role="button"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    touch-action: manipulation !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  button:active,
+  [role="button"]:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Link optimizations */
+  a {
+    touch-action: manipulation !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  a:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Card optimizations */
+  [data-card],
+  .card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    touch-action: manipulation !important;
+  }
+
+  [data-card]:active,
+  .card:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Input optimizations */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+  }
+
+  /* Modal optimizations */
+  [data-radix-dialog-overlay] {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  [data-radix-dialog-content] {
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Sheet/Drawer optimizations */
+  [data-radix-dialog-content][data-side="right"] {
+    animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  [data-radix-dialog-content][data-state="closed"][data-side="right"] {
+    animation: slideOutToRight 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Progress bar optimizations */
+  [data-progress-root] {
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  [data-progress-indicator] {
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(90deg, #059669, #10b981) !important;
+  }
+
+  /* Tab optimizations */
+  [data-tabs-trigger] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    touch-action: manipulation !important;
+  }
+
+  [data-tabs-trigger]:active {
+    transform: scale(0.96) !important;
+  }
+
+  /* Image optimizations */
+  img {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Hover effects for touch devices */
+  @media (hover: none) {
+    *:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* Smooth Animation Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Pulse animation for loading states */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Bounce animation for interactive elements */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Prevent body scroll when modal is open */
+body:has([data-radix-dialog-content][data-state="open"]) {
+  overflow: hidden !important;
+}
+
+/* Safe area handling */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+
+  .safe-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* 
+Pest Monitoring Mobile Optimizations */
+@media (max-width: 768px) {
+
+  /* Mobile modal optimizations */
+  .mobile-modal {
+    margin: 2vh auto !important;
+    max-height: 96vh !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Mobile upload area */
+  .mobile-app .border-dashed {
+    border-width: 2px !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    background: rgba(5, 150, 105, 0.02) !important;
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .mobile-app .border-dashed:hover {
+    border-color: rgba(5, 150, 105, 0.5) !important;
+    background: rgba(5, 150, 105, 0.05) !important;
+  }
+
+  /* Mobile crop cards */
+  .mobile-app [data-crop-card] {
+    min-height: 120px !important;
+    border-radius: 12px !important;
+    border: 2px solid transparent !important;
+    transition: all 0.2s ease !important;
+    touch-action: manipulation !important;
+  }
+
+  .mobile-app [data-crop-card]:hover,
+  .mobile-app [data-crop-card]:active {
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    background: rgba(5, 150, 105, 0.05) !important;
+    transform: scale(0.98) !important;
+  }
+
+  .mobile-app [data-crop-card].selected {
+    border-color: rgba(5, 150, 105, 0.6) !important;
+    background: rgba(5, 150, 105, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2) !important;
+  }
+
+  /* Mobile progress bar */
+  .mobile-app [data-progress-root] {
+    height: 8px !important;
+    border-radius: 4px !important;
+    background: rgba(5, 150, 105, 0.1) !important;
+  }
+
+  .mobile-app [data-progress-indicator] {
+    background: linear-gradient(90deg, #059669, #10b981) !important;
+    border-radius: 4px !important;
+    transition: width 0.3s ease !important;
+  }
+
+  /* Mobile tabs optimization */
+  .mobile-app [data-tabs-list] {
+    background: rgba(248, 250, 252, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 4px !important;
+  }
+
+  .mobile-app [data-tabs-trigger] {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    touch-action: manipulation !important;
+  }
+
+  .mobile-app [data-tabs-trigger][data-state="active"] {
+    background: #059669 !important;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3) !important;
+  }
+
+  /* Mobile alert optimizations */
+  .mobile-app [data-alert] {
+    border-radius: 12px !important;
+    padding: 12px !important;
+    border-width: 1px !important;
+  }
+
+  /* Mobile button optimizations */
+  .mobile-app button {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .mobile-app button:active {
+    transform: scale(0.98) !important;
+  }
+
+  /* Mobile image preview */
+  .mobile-app img[alt="Preview"] {
+    border-radius: 12px !important;
+    border: 2px solid rgba(5, 150, 105, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Mobile floating action button */
+  .mobile-app .fixed.bottom-4 {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 16px !important;
+    right: 16px !important;
+    z-index: 50 !important;
+  }
+
+  .mobile-app .fixed.bottom-4 button {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  .mobile-app .fixed.bottom-4 button:hover {
+    box-shadow: 0 12px 30px rgba(5, 150, 105, 0.5) !important;
+    transform: translateY(-2px) !important;
+  }
+}
+
+/* Pest monitoring specific animations */
+@keyframes pulse-green {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.mobile-app .animate-pulse-green {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* AI analysis loading animation */
+@keyframes ai-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.mobile-app .ai-scanning::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.3), transparent);
+  animation: ai-scan 2s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+/* Heade
+r Structure Optimizations */
+@media (max-width: 1024px) {
+
+  /* Mobile header positioning */
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Main content spacing */
+  main {
+    position: relative !important;
+    z-index: 1 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Mobile hamburger menu optimizations */
+  [data-radix-dialog-overlay] {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Mobile sheet content */
+  [data-radix-dialog-content] {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.9) 50%,
+        rgba(5, 150, 105, 0.05) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  }
+
+  /* Navigation items in mobile menu */
+  [data-radix-dialog-content] nav a {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  [data-radix-dialog-content] nav a:hover {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15) !important;
+  }
+
+  /* Active navigation item */
+  [data-radix-dialog-content] nav a[class*="from-primary"] {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+      0 8px 25px rgba(5, 150, 105, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  }
+
+  /* Quick action buttons */
+  [data-radix-dialog-content] button[class*="bg-white"] {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  [data-radix-dialog-content] button[class*="bg-white"]:hover {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15) !important;
+  }
+
+  /* Social media buttons */
+  [data-radix-dialog-content] a button[class*="bg-white"] {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Sign out button */
+  [data-radix-dialog-content] button[class*="text-red-600"] {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1) !important;
+  }
+
+  [data-radix-dialog-content] button[class*="text-red-600"]:hover {
+    background: rgba(254, 242, 242, 0.8) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Desktop header optimizations */
+@media (min-width: 1025px) {
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  main {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+}
+
+/* Smooth header transitions */
+header {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Prevent layout shift */
+body {
+  scroll-padding-top: 4rem !important;
+}
+
+/* Glass morphism effects for mobile menu */
+@supports (backdrop-filter: blur(20px)) {
+  [data-radix-dialog-content] {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  }
+}
+
+@supports not (backdrop-filter: blur(20px)) {
+  [data-radix-dialog-content] {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+}
+
+/* 
+APK-Specific Mobile Optimizations */
+@media (max-width: 1024px) {
+
+  /* Force hamburger menu visibility in APK builds */
+  .mobile-app header button,
+  .mobile-app header [role="button"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    position: relative !important;
+    z-index: 100 !important;
+  }
+
+  /* APK hamburger menu button styling */
+  .mobile-app header button[data-state],
+  .mobile-app header button:not([data-state]) {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 2px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  .mobile-app header button:hover,
+  .mobile-app header button:active {
+    background: rgba(255, 255, 255, 1) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.2) !important;
+    transform: scale(0.95) !important;
+  }
+
+  /* Hamburger menu icon in APK */
+  .mobile-app header button svg {
+    color: #374151 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 2 !important;
+  }
+
+  /* APK Sheet/Dialog overlay fixes */
+  .mobile-app [data-radix-dialog-overlay] {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    z-index: 9998 !important;
+    position: fixed !important;
+    inset: 0 !important;
+  }
+
+  /* APK Sheet content positioning */
+  .mobile-app [data-radix-dialog-content] {
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    z-index: 9999 !important;
+    transform: translateX(0) !important;
+    animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* APK Sheet content background */
+  .mobile-app [data-radix-dialog-content] {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.98) 0%,
+        rgba(248, 250, 252, 0.95) 50%,
+        rgba(5, 150, 105, 0.08) 100%) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow:
+      -10px 0 50px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  }
+
+  /* APK navigation items */
+  .mobile-app [data-radix-dialog-content] nav a {
+    min-height: 56px !important;
+    padding: 16px 20px !important;
+    margin-bottom: 8px !important;
+    border-radius: 16px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .mobile-app [data-radix-dialog-content] nav a:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* APK active navigation item */
+  .mobile-app [data-radix-dialog-content] nav a[class*="from-primary"] {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow:
+      0 8px 25px rgba(5, 150, 105, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+  }
+
+  /* APK buttons */
+  .mobile-app [data-radix-dialog-content] button {
+    min-height: 48px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .mobile-app [data-radix-dialog-content] button:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* APK close button */
+  .mobile-app [data-radix-dialog-content] button[data-radix-dialog-close] {
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  /* Prevent body scroll when menu is open in APK */
+  .mobile-app body:has([data-radix-dialog-content][data-state="open"]) {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+  }
+}
+
+/* APK Upload Modal Optimizations */
+.mobile-app [data-radix-dialog-content][class*="w-[100vw]"] {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(248, 250, 252, 0.95) 30%,
+      rgba(5, 150, 105, 0.05) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+/* APK-specific animation keyframes */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/*
+ New Mobile-First Header System */
+@media (max-width: 1024px) {
+
+  /* Mobile header base styling */
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Mobile hamburger button - APK optimized */
+  .mobile-app header button {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    min-height: 48px !important;
+    min-width: 48px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    position: relative !important;
+    z-index: 51 !important;
+  }
+
+  .mobile-app header button:hover,
+  .mobile-app header button:active {
+    background: rgba(255, 255, 255, 1) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.2) !important;
+    transform: scale(0.95) !important;
+  }
+
+  /* Mobile hamburger icon */
+  .mobile-app header button svg {
+    color: #374151 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 2 !important;
+  }
+
+  /* Mobile menu overlay backdrop */
+  .mobile-app .mobile-menu-overlay {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  /* Mobile menu panel */
+  .mobile-app .mobile-menu-panel {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.98) 0%,
+        rgba(248, 250, 252, 0.95) 50%,
+        rgba(5, 150, 105, 0.08) 100%) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.3) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+    animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Mobile navigation links */
+  .mobile-app nav a {
+    min-height: 56px !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .mobile-app nav a:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Mobile active navigation item */
+  .mobile-app nav a[class*="from-primary"] {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    color: white !important;
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4) !important;
+  }
+
+  /* Mobile buttons */
+  .mobile-app button {
+    min-height: 48px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .mobile-app button:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Prevent body scroll when mobile menu is open */
+  .mobile-app body.overflow-hidden {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* Desktop header optimizations */
+@media (min-width: 1025px) {
+  header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+/* Mobile menu slide animation */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Simple Header Styles */
+
+/* Clean header transitions */
+header * {
+  transition: all 0.2s ease !important;
+}
+
+/* Simple logo hover effect */
+header a[href="/"]:hover {
+  transform: scale(1.02) !important;
+}
+
+/* Desktop navigation hover effects */
+@media (min-width: 1024px) {
+  nav a:hover {
+    transform: translateY(-1px) !important;
+  }
+}
+
+/* Mobile sidebar menu animations */
+@media (max-width: 1024px) {
+
+  /* Mobile menu slide in animation */
+  .mobile-app [data-mobile-menu] {
+    animation: slideInFromRight 0.3s ease-out;
+  }
+
+  /* Mobile menu backdrop */
+  .mobile-app [data-mobile-backdrop] {
+    animation: fadeIn 0.2s ease-out;
+  }
+}
+
+/* Simple slide animations */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Clean button hover effects */
+button:hover {
+  transform: scale(1.02) !important;
+}
+
+button:active {
+  transform: scale(0.98) !important;
+}
+
+/* Mobile touch optimizations */
+@media (max-width: 1024px) {
+
+  .mobile-app button,
+  .mobile-app a {
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 }

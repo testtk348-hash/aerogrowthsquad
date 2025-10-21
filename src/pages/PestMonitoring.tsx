@@ -79,100 +79,132 @@ const PestMonitoring = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container py-4 sm:py-6 max-w-6xl pb-20 sm:pb-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Pest Monitoring</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">AI-powered pest and disease detection</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-24 lg:pb-6">
+        {/* Mobile-First Header */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Pest Monitoring</h1>
+              <p className="text-gray-600">AI-powered plant health analysis</p>
+            </div>
+            
+            {currentView !== 'crops' && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleBackToCrops} 
+                className="gap-2 flex-shrink-0 h-10 px-4 rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 active:scale-95"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back</span>
+              </Button>
+            )}
           </div>
           
-          {currentView !== 'crops' && (
-            <Button variant="outline" onClick={handleBackToCrops} className="gap-2 self-start sm:self-auto">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden xs:inline">Back to Crops</span>
-              <span className="xs:hidden">Back</span>
-            </Button>
-          )}
+          {/* AI Status Banner */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-4 lg:hidden">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-sm">
+                <Scan className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-green-800">Offline AI Ready</p>
+                <p className="text-sm text-green-600">No internet connection required</p>
+              </div>
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+          </div>
         </div>
 
-        {/* Navigation Tabs - Mobile Optimized */}
-        <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewState)} className="mb-4 sm:mb-6">
-          <TabsList className="grid w-full grid-cols-3 h-12 sm:h-10 lg:w-[500px]">
-            <TabsTrigger value="crops" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4">
-              <Scan className="h-4 w-4 sm:h-4 sm:w-4" />
-              <span className="hidden xs:inline sm:hidden">Crops</span>
-              <span className="hidden sm:inline">Select Crop</span>
+        {/* Mobile-Optimized Navigation Tabs */}
+        <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewState)} className="mb-6">
+          <TabsList className="grid w-full grid-cols-3 h-12 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1 shadow-sm">
+            <TabsTrigger 
+              value="crops" 
+              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 active:scale-95"
+            >
+              <Scan className="h-4 w-4" />
+              <span className="hidden sm:inline">Select</span>
+              <span className="sm:hidden">Crops</span>
             </TabsTrigger>
-            <TabsTrigger value="upload" disabled={!selectedCrop} className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4">
-              <Upload className="h-4 w-4 sm:h-4 sm:w-4" />
-              <span className="hidden xs:inline sm:hidden">Upload</span>
-              <span className="hidden sm:inline">Upload Image</span>
+            <TabsTrigger 
+              value="upload" 
+              disabled={!selectedCrop} 
+              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+            >
+              <Upload className="h-4 w-4" />
+              <span className="hidden sm:inline">Upload</span>
+              <span className="sm:hidden">Scan</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4">
-              <History className="h-4 w-4 sm:h-4 sm:w-4" />
-              <span className="hidden xs:inline">History</span>
+            <TabsTrigger 
+              value="history" 
+              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 active:scale-95"
+            >
+              <History className="h-4 w-4" />
+              <span>History</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Crop Selection View */}
           <TabsContent value="crops" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Info className="h-5 w-5" />
-                  Quick Start Guide
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full flex-shrink-0">
-                      <span className="text-primary font-bold text-sm">1</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-medium">Select Your Crop</p>
-                      <p className="text-muted-foreground text-xs sm:text-sm">Choose the crop type you want to analyze</p>
-                    </div>
+            {/* Quick Start Guide - Mobile Optimized */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center shadow-sm">
+                  <Info className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-blue-900">How It Works</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <span className="text-white font-bold text-sm">1</span>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full flex-shrink-0">
-                      <span className="text-primary font-bold text-sm">2</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-medium">Upload Clear Image</p>
-                      <p className="text-muted-foreground text-xs sm:text-sm">Take a close-up photo of the leaf or affected area</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-primary/10 p-2 rounded-full flex-shrink-0">
-                      <span className="text-primary font-bold text-sm">3</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-medium">Get AI Analysis</p>
-                      <p className="text-muted-foreground text-xs sm:text-sm">Receive instant pest/disease detection results</p>
-                    </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-1">Select Crop</p>
+                    <p className="text-sm text-gray-600">Choose your plant type from the options below</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <span className="text-white font-bold text-sm">2</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-1">Capture Image</p>
+                    <p className="text-sm text-gray-600">Take a clear photo of the plant leaf</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <span className="text-white font-bold text-sm">3</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-1">Get Results</p>
+                    <p className="text-sm text-gray-600">Receive instant AI analysis offline</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            {/* Crop Selection */}
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Choose Your Crop</h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Choose Your Crop</h2>
                 {selectedCrop && (
                   <Button 
                     onClick={() => setCurrentView('upload')} 
-                    className="gap-2"
+                    className="gap-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 rounded-xl"
                     size="sm"
                   >
                     <Upload className="h-4 w-4" />
-                    Continue to Upload
+                    <span className="hidden sm:inline">Continue to Upload</span>
+                    <span className="sm:hidden">Continue</span>
                   </Button>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {cropData.map((crop) => (
                   <CropCard
                     key={crop.id}
@@ -414,16 +446,17 @@ const PestMonitoring = () => {
           />
         )}
 
-        {/* Floating Action Button for Mobile */}
+        {/* Mobile Floating Action Button */}
         {currentView === 'crops' && selectedCrop && (
-          <div className="fixed bottom-4 left-4 right-4 z-50 sm:hidden">
+          <div className="fixed bottom-6 left-4 right-4 z-50 lg:hidden">
             <Button 
               size="lg" 
               onClick={() => setCurrentView('upload')}
-              className="w-full rounded-full shadow-lg gap-2 h-12"
+              className="w-full h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-95 rounded-2xl gap-3"
             >
-              <Upload className="h-5 w-5" />
-              Continue to Upload
+              <Upload className="h-6 w-6" />
+              <span className="text-lg">Continue to AI Analysis</span>
+              <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
         )}

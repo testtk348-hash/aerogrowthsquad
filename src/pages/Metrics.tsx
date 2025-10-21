@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Download, TrendingUp, Share } from "lucide-react";
+import { isMobile, shareContent, saveFile } from "@/utils/mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,9 +89,26 @@ const Metrics = () => {
       const filename = `${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
       
       // Check if we're on mobile and use different approach
-      const isMobile = isMobileDevice();
+      const isOnMobile = isMobile() || isMobileDevice();
       
-      if (isMobile) {
+      if (isOnMobile) {
+        // Try Capacitor native sharing first
+        if (isMobile()) {
+          try {
+            const success = await saveFile(csvContent, filename);
+            if (success) {
+              await shareContent(
+                'CSV Export',
+                `${selectedMetric} metrics for ${days} day${days > 1 ? 's' : ''}`,
+                undefined
+              );
+              console.log(`${days} day${days > 1 ? 's' : ''} CSV exported and shared successfully!`);
+              return;
+            }
+          } catch (error) {
+            console.log('Native sharing failed, falling back to web methods');
+          }
+        }
         // Mobile-friendly approach using File System Access API or fallback
         if ('showSaveFilePicker' in window) {
           try {
@@ -107,7 +125,7 @@ const Metrics = () => {
             await writable.write(csvContent);
             await writable.close();
             
-            toast.success(`${days} day${days > 1 ? 's' : ''} CSV saved successfully!`);
+            console.log(`${days} day${days > 1 ? 's' : ''} CSV saved successfully!`);
             return;
           } catch (err) {
             // User cancelled or API not supported, fall through to blob method
@@ -127,7 +145,7 @@ const Metrics = () => {
               title: 'Export CSV Data',
               text: `${selectedMetric} metrics for ${days} day${days > 1 ? 's' : ''}`
             });
-            toast.success(`${days} day${days > 1 ? 's' : ''} CSV shared successfully!`);
+            console.log(`${days} day${days > 1 ? 's' : ''} CSV shared successfully!`);
             return;
           } catch (err) {
             // Share failed, fall through to download
@@ -139,7 +157,7 @@ const Metrics = () => {
         const newWindow = window.open(dataUrl, '_blank');
         
         if (newWindow) {
-          toast.success(`${days} day${days > 1 ? 's' : ''} CSV opened in new tab. Use "Save As" to download.`);
+          console.log(`${days} day${days > 1 ? 's' : ''} CSV opened in new tab. Use "Save As" to download.`);
         } else {
           // If popup blocked, use traditional blob download
           const url = window.URL.createObjectURL(blob);
@@ -151,7 +169,7 @@ const Metrics = () => {
           link.click();
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-          toast.success(`${days} day${days > 1 ? 's' : ''} CSV download initiated!`);
+          console.log(`${days} day${days > 1 ? 's' : ''} CSV download initiated!`);
         }
       } else {
         // Desktop approach - traditional blob download
@@ -165,11 +183,11 @@ const Metrics = () => {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-        toast.success(`${days} day${days > 1 ? 's' : ''} CSV downloaded successfully!`);
+        console.log(`${days} day${days > 1 ? 's' : ''} CSV downloaded successfully!`);
       }
     } catch (error) {
       console.error('Export failed:', error);
-      toast.error('Failed to export CSV. Please try again.');
+      console.error('Failed to export CSV. Please try again.');
     }
   };
 

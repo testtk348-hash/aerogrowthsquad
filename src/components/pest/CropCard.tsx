@@ -23,10 +23,12 @@ export const CropCard = ({
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group",
-        isSelected && "ring-2 ring-primary shadow-xl scale-[1.02] bg-primary/5"
+        "cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group mobile-touch-target",
+        isSelected && "ring-2 ring-primary shadow-xl scale-[1.02] bg-primary/5 selected"
       )}
       onClick={onClick}
+      data-crop-card
+      style={{ touchAction: 'manipulation' }}
     >
       <CardContent className="p-0">
         <div className="aspect-[4/3] rounded-t-lg overflow-hidden bg-muted relative">
@@ -47,35 +49,46 @@ export const CropCard = ({
         </div>
         
         <div className="p-3 sm:p-4">
-          <h3 className="font-semibold text-base sm:text-lg mb-2 group-hover:text-primary transition-colors">
-            {name}
-          </h3>
-          <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="font-semibold text-sm sm:text-lg group-hover:text-primary transition-colors flex-1 min-w-0">
+              {name}
+            </h3>
+            {isSelected && (
+              <div className="bg-primary text-primary-foreground rounded-full p-1 ml-2 flex-shrink-0">
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            )}
+          </div>
+          
+          <p className="text-xs text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
             {description}
           </p>
           
           <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <p className="text-xs font-medium text-muted-foreground">
               Common Issues:
             </p>
             <div className="flex flex-wrap gap-1">
               {commonPests.slice(0, 2).map((pest) => (
-                <Badge key={pest} variant="secondary" className="text-xs">
+                <Badge key={pest} variant="secondary" className="text-xs px-2 py-1">
                   {pest}
                 </Badge>
               ))}
               {commonPests.length > 2 && (
-                <Badge variant="outline" className="text-xs">
-                  +{commonPests.length - 2} more
+                <Badge variant="outline" className="text-xs px-2 py-1">
+                  +{commonPests.length - 2}
                 </Badge>
               )}
             </div>
           </div>
           
           {isSelected && (
-            <div className="mt-3 pt-3 border-t">
-              <p className="text-xs text-primary font-medium">
-                ✓ Selected - Continue to upload
+            <div className="mt-3 pt-2 border-t border-primary/20">
+              <p className="text-xs text-primary font-medium flex items-center gap-1">
+                <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                Ready for AI Analysis
               </p>
             </div>
           )}
