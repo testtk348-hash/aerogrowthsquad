@@ -1,51 +1,38 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Camera, Scan, History, Sparkles, CheckCircle, AlertTriangle, Leaf } from "lucide-react";
+import { Camera, Scan, History, Sparkles, CheckCircle, Leaf } from "lucide-react";
 import { CropCard } from "@/components/pest/CropCard";
-import { UploadModal, AnalysisResult } from "@/components/pest/UploadModal";
 import { cropData } from "@/lib/mockData";
 
-type ViewState = 'crops' | 'upload' | 'results' | 'history';
+export interface AnalysisResult {
+  prediction: string;
+  confidence: number;
+  is_healthy: boolean;
+  recommendations: string;
+  imageUrl: string;
+  model_info?: {
+    raw_prediction_value: number;
+    model_threshold: number;
+    interpretation: string;
+  };
+  correlatedMetrics?: {
+    pH: number;
+    humidity: number;
+    tds: number;
+  };
+}
+
+type ViewState = 'crops' | 'history';
 
 const PestMonitoring = () => {
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<ViewState>('crops');
-  const [selectedCrop, setSelectedCrop] = useState<string | null>(null);
-  const [uploadOpen, setUploadOpen] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisHistory, setAnalysisHistory] = useState<(AnalysisResult & { cropName: string; timestamp: Date })[]>([]);
 
-  const selectedCropData = cropData.find((c) => c.id === selectedCrop);
-
   const handleCropSelect = (cropId: string) => {
-    setSelectedCrop(cropId);
-    setUploadOpen(true);
-  };
-
-  const handleAnalysisComplete = (result: AnalysisResult) => {
-    setAnalysisResult(result);
-    setUploadOpen(false);
-    setCurrentView('results');
-    
-    // Add to history
-    if (selectedCropData) {
-      setAnalysisHistory(prev => [{
-        ...result,
-        cropName: selectedCropData.name,
-        timestamp: new Date()
-      }, ...prev.slice(0, 9)]); // Keep last 10 results
-    }
-  };
-
-  const handleBackToCrops = () => {
-    setCurrentView('crops');
-    setSelectedCrop(null);
-    setAnalysisResult(null);
-  };
-
-  const handleNewAnalysis = () => {
-    setAnalysisResult(null);
-    setCurrentView('crops');
+    navigate(`/plant-analysis?crop=${cropId}`);
   };
 
   return (
@@ -64,18 +51,6 @@ const PestMonitoring = () => {
                 <p className="text-sm text-primary font-medium">AI Plant Health Analysis</p>
               </div>
             </div>
-            
-            {currentView !== 'crops' && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleBackToCrops} 
-                className="gap-2 h-10 px-4 rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 active:scale-95"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
-              </Button>
-            )}
           </div>
           
           {/* AI Status */}
@@ -95,7 +70,7 @@ const PestMonitoring = () => {
 
         {/* Navigation Tabs - Fixed */}
         <div className="flex-shrink-0 p-4 bg-white/50">
-          <div className="grid grid-cols-3 h-12 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1 shadow-sm">
+          <div className="grid grid-cols-2 h-12 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1 shadow-sm">
             <button
               onClick={() => setCurrentView('crops')}
               className={`flex items-center justify-center gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 active:scale-95 ${
@@ -106,18 +81,6 @@ const PestMonitoring = () => {
             >
               <Scan className="h-4 w-4" />
               <span>Crops</span>
-            </button>
-            <button
-              onClick={() => setCurrentView('upload')}
-              disabled={!selectedCrop}
-              className={`flex items-center justify-center gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
-                currentView === 'upload' 
-                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25' 
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Camera className="h-4 w-4" />
-              <span>Scan</span>
             </button>
             <button
               onClick={() => setCurrentView('history')}
@@ -156,7 +119,7 @@ const PestMonitoring = () => {
                   <CropCard
                     key={crop.id}
                     {...crop}
-                    isSelected={selectedCrop === crop.id}
+                    isSelected={false}
                     onClick={() => handleCropSelect(crop.id)}
                   />
                 ))}
@@ -198,9 +161,10 @@ const PestMonitoring = () => {
                         size="sm"
                         className="text-xs px-3 rounded-xl"
                         onClick={() => {
-                          setAnalysisResult(item);
-                          setSelectedCrop(cropData.find(c => c.name === item.cropName)?.id || null);
-                          setCurrentView('results');
+                          const crop = cropData.find(c => c.name === item.cropName);
+                          if (crop) {
+                            navigate(`/plant-analysis?crop=${crop.id}`);
+                          }
                         }}
                       >
                         View
@@ -211,95 +175,7 @@ const PestMonitoring = () => {
               )}
             </div>
           )}
-
-          {/* Results View */}
-          {currentView === 'results' && analysisResult && selectedCropData && (
-            <div className="p-4 space-y-4">
-              {/* Result Header */}
-              <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold text-lg">Analysis Results</h3>
-                  <Badge variant={analysisResult.is_healthy ? "default" : "destructive"}>
-                    {analysisResult.confidence}% confidence
-                  </Badge>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">{selectedCropData.name}</p>
-                
-                {/* Image */}
-                <img
-                  src={analysisResult.imageUrl}
-                  alt="Analyzed"
-                  className="w-full h-48 rounded-xl object-cover mb-4"
-                />
-
-                {/* Health Status */}
-                <div className={`p-3 rounded-xl border ${
-                  analysisResult.is_healthy 
-                    ? "bg-green-50 border-green-200" 
-                    : "bg-orange-50 border-orange-200"
-                }`}>
-                  <p className="font-semibold mb-1">{analysisResult.prediction}</p>
-                  <p className="text-sm text-gray-600">
-                    Status: {analysisResult.is_healthy ? "Healthy Plant" : "Requires Attention"}
-                  </p>
-                </div>
-              </div>
-
-              {/* Recommendations */}
-              <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
-                <h4 className="font-semibold mb-3">Recommendations</h4>
-                <div className={`text-sm p-3 rounded-xl ${
-                  analysisResult.is_healthy 
-                    ? "bg-green-50 text-green-800" 
-                    : "bg-orange-50 text-orange-800"
-                }`}>
-                  {analysisResult.recommendations}
-                </div>
-              </div>
-
-              {/* Sensor Metrics */}
-              {analysisResult.correlatedMetrics && (
-                <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
-                  <h4 className="font-semibold mb-3">Current Conditions</h4>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="text-center p-3 bg-gray-50 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">pH Level</p>
-                      <p className="font-bold">{analysisResult.correlatedMetrics.pH.toFixed(1)}</p>
-                    </div>
-                    <div className="text-center p-3 bg-gray-50 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Humidity</p>
-                      <p className="font-bold">{analysisResult.correlatedMetrics.humidity.toFixed(0)}%</p>
-                    </div>
-                    <div className="text-center p-3 bg-gray-50 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">TDS</p>
-                      <p className="font-bold">{analysisResult.correlatedMetrics.tds.toFixed(0)}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" onClick={handleNewAnalysis} className="h-12 rounded-xl">
-                  Analyze Another
-                </Button>
-                <Button onClick={handleBackToCrops} className="h-12 rounded-xl bg-gradient-to-r from-primary to-secondary">
-                  Done
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
-
-        {/* Upload Modal */}
-        {selectedCropData && (
-          <UploadModal
-            open={uploadOpen}
-            onClose={() => setUploadOpen(false)}
-            cropName={selectedCropData.name}
-            onAnalysisComplete={handleAnalysisComplete}
-          />
-        )}
       </div>
     </div>
   );
