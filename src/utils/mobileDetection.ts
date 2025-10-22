@@ -50,9 +50,10 @@ export const preventAccidentalNavigation = (): void => {
     document.addEventListener('click', (event) => {
       const target = event.target as HTMLElement;
       
-      // Skip all prevention if CSV export is active
-      if (document.body.classList.contains('csv-export-active')) {
-        console.log('CSV export active - allowing all clicks');
+      // Skip all prevention if CSV export or select is active
+      if (document.body.classList.contains('csv-export-active') || 
+          document.body.classList.contains('select-active')) {
+        console.log('CSV export or select active - allowing all clicks');
         return;
       }
       

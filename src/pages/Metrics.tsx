@@ -188,57 +188,102 @@ const Metrics = () => {
               value={selectedMetric} 
               onValueChange={(v) => {
                 console.log('Parameter selected:', v);
+                // Temporarily disable navigation prevention during selection
+                document.body.classList.add('select-active');
                 setSelectedMetric(v as MetricType);
+                // Re-enable after a short delay
+                setTimeout(() => {
+                  document.body.classList.remove('select-active');
+                }, 500);
+              }}
+              onOpenChange={(open) => {
+                console.log('Select dropdown open state:', open);
+                // Disable navigation prevention when dropdown is open
+                if (open) {
+                  document.body.classList.add('select-active');
+                } else {
+                  setTimeout(() => {
+                    document.body.classList.remove('select-active');
+                  }, 300);
+                }
               }}
             >
               <SelectTrigger 
-                className="w-full md:w-[200px] min-h-[44px] touch-manipulation"
+                className="w-full md:w-[200px] min-h-[48px] touch-manipulation select-trigger-mobile"
                 data-interactive="true"
                 data-select-trigger="true"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+                onClick={(e) => {
+                  console.log('Select trigger clicked');
+                  e.stopPropagation();
+                }}
               >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent 
                 data-interactive="true"
                 data-select-content="true"
+                className="select-content-mobile"
+                position="popper"
+                sideOffset={8}
               >
                 <SelectItem 
                   value="pH"
-                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  className="min-h-[48px] touch-manipulation cursor-pointer select-item-mobile"
                   data-interactive="true"
                   data-select-item="true"
+                  onClick={(e) => {
+                    console.log('pH selected');
+                    e.stopPropagation();
+                  }}
                 >
                   pH Level
                 </SelectItem>
                 <SelectItem 
                   value="air_temp"
-                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  className="min-h-[48px] touch-manipulation cursor-pointer select-item-mobile"
                   data-interactive="true"
                   data-select-item="true"
+                  onClick={(e) => {
+                    console.log('Air Temperature selected');
+                    e.stopPropagation();
+                  }}
                 >
                   Air Temperature
                 </SelectItem>
                 <SelectItem 
                   value="water_temp"
-                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  className="min-h-[48px] touch-manipulation cursor-pointer select-item-mobile"
                   data-interactive="true"
                   data-select-item="true"
+                  onClick={(e) => {
+                    console.log('Water Temperature selected');
+                    e.stopPropagation();
+                  }}
                 >
                   Water Temperature
                 </SelectItem>
                 <SelectItem 
                   value="tds"
-                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  className="min-h-[48px] touch-manipulation cursor-pointer select-item-mobile"
                   data-interactive="true"
                   data-select-item="true"
+                  onClick={(e) => {
+                    console.log('TDS selected');
+                    e.stopPropagation();
+                  }}
                 >
                   TDS
                 </SelectItem>
                 <SelectItem 
                   value="humidity"
-                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  className="min-h-[48px] touch-manipulation cursor-pointer select-item-mobile"
                   data-interactive="true"
                   data-select-item="true"
+                  onClick={(e) => {
+                    console.log('Humidity selected');
+                    e.stopPropagation();
+                  }}
                 >
                   Humidity
                 </SelectItem>
