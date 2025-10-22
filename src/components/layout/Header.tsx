@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
+import { shouldUseMobileLayout, forceMenuVisibility } from "@/utils/mobileDetection";
 
 const navLinks = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -17,8 +18,28 @@ const navLinks = [
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
   const { logout, userRole, userEmail } = useAuth();
   const location = useLocation();
+
+  // Enhanced mobile detection for Capacitor apps
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(shouldUseMobileLayout());
+      forceMenuVisibility();
+    };
+
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(checkMobileView, 150); // Delay to ensure orientation change is complete
+    });
+
+    return () => {
+      window.removeEventListener('resize', checkMobileView);
+      window.removeEventListener('orientationchange', checkMobileView);
+    };
+  }, []);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -40,22 +61,24 @@ export const Header = () => {
     <>
       {/* Main Header */}
       <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-lg border-b border-border shadow-[var(--shadow-sm)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="w-full px-0">
+          <div className="flex items-center justify-between h-16 w-full px-4">
             
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 gradient-primary rounded-lg flex items-center justify-center shadow-[var(--shadow-sm)] transition-all duration-300 group-hover:scale-110">
-                <Leaf className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-base font-bold text-foreground leading-tight">AeroGrowth</span>
-                <span className="text-[10px] text-primary font-medium leading-tight hidden sm:inline">Vertical Farming</span>
-              </div>
-            </Link>
+            <div className="flex-shrink-0">
+              <Link to="/" className="flex items-center gap-2.5 group">
+                <div className="w-9 h-9 gradient-primary rounded-lg flex items-center justify-center shadow-[var(--shadow-sm)] transition-all duration-300 group-hover:scale-110">
+                  <Leaf className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-base font-bold text-foreground leading-tight">AeroGrowth</span>
+                  <span className="text-[10px] text-primary font-medium leading-tight hidden sm:inline">Vertical Farming</span>
+                </div>
+              </Link>
+            </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className={`${isMobileView ? 'hidden' : 'flex'} items-center gap-1`}>
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.href;
                 const Icon = link.icon;
@@ -77,7 +100,7 @@ export const Header = () => {
             </nav>
 
             {/* Desktop User Menu */}
-            <div className="hidden lg:block relative">
+            <div className={`${isMobileView ? 'hidden' : 'block'} relative`}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover:bg-muted transition-all duration-200"
@@ -138,19 +161,31 @@ export const Header = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors duration-200"
-            >
-              <Menu className="h-6 w-6 text-foreground" />
-            </button>
+            <div className="flex-shrink-0">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setMobileMenuOpen(!mobileMenuOpen);
+                }}
+                className={`mobile-menu-button ${isMobileView ? 'flex' : 'hidden'} items-center justify-center p-2 rounded-lg hover:bg-muted transition-colors duration-200 min-w-[44px] min-h-[44px]`}
+                type="button"
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-6 w-6 text-foreground" />
+                ) : (
+                  <Menu className="h-6 w-6 text-foreground" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden fixed inset-0 z-50 transition-all duration-300 ${
+        className={`${isMobileView ? 'block' : 'hidden'} fixed inset-0 z-50 transition-all duration-300 ${
           mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
       >
@@ -162,7 +197,7 @@ export const Header = () => {
 
         {/* Menu Panel */}
         <div
-          className={`absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border shadow-[var(--shadow-lg)] transform transition-transform duration-300 ${
+          className={`mobile-menu-panel absolute right-0 top-0 bottom-0 w-full max-w-sm bg-background border-l border-border shadow-[var(--shadow-lg)] transform transition-transform duration-300 ${
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -201,8 +236,8 @@ export const Header = () => {
             </div>
 
             {/* Navigation Links */}
-            <div className="flex-1 p-4">
-              <nav className="space-y-1">
+            <div className="flex-1 p-4 overflow-y-auto">
+              <nav className="space-y-2">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.href;
                   const Icon = link.icon;
@@ -211,14 +246,14 @@ export const Header = () => {
                       key={link.href}
                       to={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3.5 rounded-lg text-base font-medium transition-all duration-200 ${
+                      className={`flex items-center gap-3 px-4 py-4 rounded-lg text-base font-medium transition-all duration-200 w-full ${
                         isActive
                           ? 'bg-primary text-primary-foreground shadow-[var(--shadow-sm)]'
                           : 'text-foreground hover:bg-muted'
                       }`}
                     >
-                      <Icon className="h-5 w-5" />
-                      <span>{link.name}</span>
+                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      <span className="flex-1 text-left">{link.name}</span>
                     </Link>
                   );
                 })}
@@ -226,17 +261,17 @@ export const Header = () => {
             </div>
 
             {/* Bottom Actions */}
-            <div className="p-4 border-t border-border space-y-1 bg-muted/20">
-              <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+            <div className="p-4 border-t border-border space-y-2 bg-muted/20 flex-shrink-0">
+              <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors duration-200">
-                  <User className="h-4 w-4 text-primary" />
-                  Profile
+                  <User className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="flex-1 text-left">Profile</span>
                 </button>
               </Link>
-              <Link to="/settings" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/settings" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors duration-200">
-                  <Settings className="h-4 w-4 text-primary" />
-                  Settings
+                  <Settings className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="flex-1 text-left">Settings</span>
                 </button>
               </Link>
               <button
@@ -246,8 +281,8 @@ export const Header = () => {
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors duration-200"
               >
-                <LogOut className="h-4 w-4" />
-                Sign Out
+                <LogOut className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1 text-left">Sign Out</span>
               </button>
             </div>
           </div>

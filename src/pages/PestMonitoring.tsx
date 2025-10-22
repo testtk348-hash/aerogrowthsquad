@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Upload, Camera, Scan, History, Info, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Camera, Scan, History, Sparkles, CheckCircle, AlertTriangle, Leaf } from "lucide-react";
 import { CropCard } from "@/components/pest/CropCard";
 import { UploadModal, AnalysisResult } from "@/components/pest/UploadModal";
-import { ResultsModal } from "@/components/pest/ResultsModal";
 import { cropData } from "@/lib/mockData";
 
 type ViewState = 'crops' | 'upload' | 'results' | 'history';
@@ -15,7 +12,6 @@ const PestMonitoring = () => {
   const [currentView, setCurrentView] = useState<ViewState>('crops');
   const [selectedCrop, setSelectedCrop] = useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [resultsOpen, setResultsOpen] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [analysisHistory, setAnalysisHistory] = useState<(AnalysisResult & { cropName: string; timestamp: Date })[]>([]);
 
@@ -23,11 +19,6 @@ const PestMonitoring = () => {
 
   const handleCropSelect = (cropId: string) => {
     setSelectedCrop(cropId);
-    setAnalysisResult(null);
-    setCurrentView('upload');
-  };
-
-  const handleStartUpload = () => {
     setUploadOpen(true);
   };
 
@@ -54,39 +45,24 @@ const PestMonitoring = () => {
 
   const handleNewAnalysis = () => {
     setAnalysisResult(null);
-    setCurrentView('upload');
-  };
-
-  const renderBreadcrumb = () => {
-    const steps = [
-      { key: 'crops', label: 'Select Crop', active: currentView === 'crops' },
-      { key: 'upload', label: 'Upload Image', active: currentView === 'upload' },
-      { key: 'results', label: 'View Results', active: currentView === 'results' }
-    ];
-
-    return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        {steps.map((step, index) => (
-          <div key={step.key} className="flex items-center gap-2">
-            <span className={step.active ? 'text-primary font-medium' : ''}>
-              {step.label}
-            </span>
-            {index < steps.length - 1 && <span>→</span>}
-          </div>
-        ))}
-      </div>
-    );
+    setCurrentView('crops');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 py-6 pb-24 lg:pb-6">
-        {/* Mobile-First Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Pest Monitoring</h1>
-              <p className="text-gray-600">AI-powered plant health analysis</p>
+      <div className="h-screen flex flex-col">
+        
+        {/* Header - Fixed */}
+        <div className="flex-shrink-0 p-4 bg-white/90 backdrop-blur-xl border-b border-gray-200/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg">
+                <Leaf className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Pest Monitoring</h1>
+                <p className="text-sm text-primary font-medium">AI Plant Health Analysis</p>
+              </div>
             </div>
             
             {currentView !== 'crops' && (
@@ -94,7 +70,7 @@ const PestMonitoring = () => {
                 variant="outline" 
                 size="sm"
                 onClick={handleBackToCrops} 
-                className="gap-2 flex-shrink-0 h-10 px-4 rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 active:scale-95"
+                className="gap-2 h-10 px-4 rounded-xl border-2 hover:border-primary hover:bg-primary/5 transition-all duration-200 active:scale-95"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back</span>
@@ -102,109 +78,80 @@ const PestMonitoring = () => {
             )}
           </div>
           
-          {/* AI Status Banner */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-4 lg:hidden">
+          {/* AI Status */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-2xl p-3 mt-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-sm">
-                <Scan className="h-5 w-5 text-white" />
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-sm">
+                <Sparkles className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-green-800">Offline AI Ready</p>
-                <p className="text-sm text-green-600">No internet connection required</p>
+                <p className="font-semibold text-green-800 text-sm">Offline AI Ready</p>
+                <p className="text-xs text-green-600">No internet connection required</p>
               </div>
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
 
-        {/* Mobile-Optimized Navigation Tabs */}
-        <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewState)} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3 h-12 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1 shadow-sm">
-            <TabsTrigger 
-              value="crops" 
-              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 active:scale-95"
+        {/* Navigation Tabs - Fixed */}
+        <div className="flex-shrink-0 p-4 bg-white/50">
+          <div className="grid grid-cols-3 h-12 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-1 shadow-sm">
+            <button
+              onClick={() => setCurrentView('crops')}
+              className={`flex items-center justify-center gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 active:scale-95 ${
+                currentView === 'crops' 
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               <Scan className="h-4 w-4" />
-              <span className="hidden sm:inline">Select</span>
-              <span className="sm:hidden">Crops</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="upload" 
-              disabled={!selectedCrop} 
-              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+              <span>Crops</span>
+            </button>
+            <button
+              onClick={() => setCurrentView('upload')}
+              disabled={!selectedCrop}
+              className={`flex items-center justify-center gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed ${
+                currentView === 'upload' 
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
-              <Upload className="h-4 w-4" />
-              <span className="hidden sm:inline">Upload</span>
-              <span className="sm:hidden">Scan</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="history" 
-              className="gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-primary/25 active:scale-95"
+              <Camera className="h-4 w-4" />
+              <span>Scan</span>
+            </button>
+            <button
+              onClick={() => setCurrentView('history')}
+              className={`flex items-center justify-center gap-2 text-sm font-medium px-4 rounded-xl transition-all duration-200 active:scale-95 ${
+                currentView === 'history' 
+                  ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
               <History className="h-4 w-4" />
               <span>History</span>
-            </TabsTrigger>
-          </TabsList>
+            </button>
+          </div>
+        </div>
 
+        {/* Content Area - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          
           {/* Crop Selection View */}
-          <TabsContent value="crops" className="space-y-6">
-            {/* Quick Start Guide - Mobile Optimized */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center shadow-sm">
-                  <Info className="h-5 w-5 text-white" />
+          {currentView === 'crops' && (
+            <div className="p-4 space-y-4">
+              {/* Quick Guide */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-2xl p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center shadow-sm">
+                    <CheckCircle className="h-4 w-4 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-blue-900">How It Works</h3>
                 </div>
-                <h3 className="text-lg font-semibold text-blue-900">How It Works</h3>
+                <p className="text-sm text-blue-700">Select your crop → Take a photo → Get instant AI analysis</p>
               </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
-                    <span className="text-white font-bold text-sm">1</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 mb-1">Select Crop</p>
-                    <p className="text-sm text-gray-600">Choose your plant type from the options below</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
-                    <span className="text-white font-bold text-sm">2</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 mb-1">Capture Image</p>
-                    <p className="text-sm text-gray-600">Take a clear photo of the plant leaf</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
-                    <span className="text-white font-bold text-sm">3</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 mb-1">Get Results</p>
-                    <p className="text-sm text-gray-600">Receive instant AI analysis offline</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Crop Selection */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Choose Your Crop</h2>
-                {selectedCrop && (
-                  <Button 
-                    onClick={() => setCurrentView('upload')} 
-                    className="gap-2 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 rounded-xl"
-                    size="sm"
-                  >
-                    <Upload className="h-4 w-4" />
-                    <span className="hidden sm:inline">Continue to Upload</span>
-                    <span className="sm:hidden">Continue</span>
-                  </Button>
-                )}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* Crop Grid */}
+              <div className="grid grid-cols-2 gap-3">
                 {cropData.map((crop) => (
                   <CropCard
                     key={crop.id}
@@ -215,226 +162,134 @@ const PestMonitoring = () => {
                 ))}
               </div>
             </div>
-          </TabsContent>
-
-          {/* Upload View */}
-          <TabsContent value="upload" className="space-y-6">
-            {selectedCropData && (
-              <>
-                {renderBreadcrumb()}
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Camera className="h-5 w-5" />
-                      Upload Image for {selectedCropData.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4 sm:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                      <div>
-                        <h3 className="font-medium mb-3 flex items-center gap-2 text-sm sm:text-base">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          Best Practices
-                        </h3>
-                        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                          <li>• Use good lighting (natural light preferred)</li>
-                          <li>• Focus on leaf surfaces showing symptoms</li>
-                          <li>• Keep image sharp and clear</li>
-                          <li>• Fill the frame with the leaf/affected area</li>
-                          <li>• Minimum 224x224 pixels resolution</li>
-                        </ul>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-medium mb-3 flex items-center gap-2 text-sm sm:text-base">
-                          <AlertTriangle className="h-4 w-4 text-orange-600" />
-                          Common Issues to Avoid
-                        </h3>
-                        <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
-                          <li>• Blurry or out-of-focus images</li>
-                          <li>• Too dark or overexposed photos</li>
-                          <li>• Images with hands or tools visible</li>
-                          <li>• Multiple leaves or cluttered background</li>
-                          <li>• Images of fruits or flowers (leaves only)</li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center pt-2">
-                      <Button size="lg" onClick={handleStartUpload} className="gap-2 w-full sm:w-auto">
-                        <Upload className="h-5 w-5" />
-                        <span className="hidden xs:inline">Upload Image for Analysis</span>
-                        <span className="xs:hidden">Upload Image</span>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
-          </TabsContent>
+          )}
 
           {/* History View */}
-          <TabsContent value="history" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5" />
-                  Analysis History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {analysisHistory.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No analysis history yet</p>
-                    <p className="text-sm">Start by analyzing some crops to see your history here</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 sm:space-y-4">
-                    {analysisHistory.map((item, index) => (
-                      <div key={index} className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
-                        <img 
-                          src={item.imageUrl} 
-                          alt="Analysis" 
-                          className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
-                            <span className="font-medium text-sm sm:text-base truncate">{item.cropName}</span>
-                            <Badge variant={item.is_healthy ? "default" : "destructive"} className="self-start text-xs">
-                              {item.is_healthy ? "Healthy" : "Affected"}
-                            </Badge>
-                          </div>
-                          <p className="text-xs sm:text-sm text-muted-foreground">
-                            {item.confidence}% confidence • {item.timestamp.toLocaleDateString()}
-                          </p>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-xs px-2 sm:px-3"
-                          onClick={() => {
-                            setAnalysisResult(item);
-                            setSelectedCrop(cropData.find(c => c.name === item.cropName)?.id || null);
-                            setCurrentView('results');
-                          }}
-                        >
-                          <span className="hidden sm:inline">View Details</span>
-                          <span className="sm:hidden">View</span>
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        {/* Results View */}
-        {currentView === 'results' && analysisResult && selectedCropData && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Analysis Results - {selectedCropData.name}</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={handleNewAnalysis}>
-                    Analyze Another
-                  </Button>
-                  <Button onClick={handleBackToCrops}>
-                    Done
-                  </Button>
+          {currentView === 'history' && (
+            <div className="p-4">
+              {analysisHistory.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <History className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium mb-2">No Analysis History</p>
+                  <p className="text-sm">Start analyzing crops to see your history here</p>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {/* Image */}
-                <div className="order-2 md:order-1">
-                  <h3 className="font-medium mb-3 text-sm sm:text-base">Analyzed Image</h3>
-                  <img
-                    src={analysisResult.imageUrl}
-                    alt="Analyzed"
-                    className="w-full rounded-lg border max-h-64 sm:max-h-none object-cover"
-                  />
-                </div>
-
-                {/* Results */}
-                <div className="space-y-3 sm:space-y-4 order-1 md:order-2">
-                  {/* Health Status */}
-                  <div>
-                    <h3 className="font-medium mb-3 text-sm sm:text-base">Health Analysis</h3>
-                    <div className="p-3 sm:p-4 bg-muted rounded-lg border">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
-                        <p className="font-semibold text-sm sm:text-base">{analysisResult.prediction}</p>
-                        <Badge variant={analysisResult.is_healthy ? "default" : "destructive"} className="self-start">
-                          {analysisResult.confidence}% confidence
-                        </Badge>
-                      </div>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        Status: {analysisResult.is_healthy ? "Healthy" : "Requires Attention"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Recommendations */}
-                  <div>
-                    <h3 className="font-medium mb-3 text-sm sm:text-base">Recommendations</h3>
-                    <div className={`text-xs sm:text-sm p-3 sm:p-4 rounded-lg border ${
-                      analysisResult.is_healthy 
-                        ? "bg-green-50 border-green-200 text-green-800" 
-                        : "bg-orange-50 border-orange-200 text-orange-800"
-                    }`}>
-                      {analysisResult.recommendations}
-                    </div>
-                  </div>
-
-                  {/* ML Model Info */}
-                  {analysisResult.model_info && (
-                    <div>
-                      <h3 className="font-medium mb-3">AI Analysis Details</h3>
-                      <div className="p-3 bg-muted rounded-lg border text-sm">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-muted-foreground">ML Model Score:</span>
-                          <span className="font-mono">{analysisResult.model_info.raw_prediction_value.toFixed(4)}</span>
+              ) : (
+                <div className="space-y-3">
+                  {analysisHistory.map((item, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-200/50 shadow-sm">
+                      <img 
+                        src={item.imageUrl} 
+                        alt="Analysis" 
+                        className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-sm truncate">{item.cropName}</span>
+                          <Badge variant={item.is_healthy ? "default" : "destructive"} className="text-xs">
+                            {item.is_healthy ? "Healthy" : "Issue"}
+                          </Badge>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Threshold:</span>
-                          <span className="font-mono">{analysisResult.model_info.model_threshold}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {analysisResult.model_info.interpretation}
+                        <p className="text-xs text-muted-foreground">
+                          {item.confidence}% • {item.timestamp.toLocaleDateString()}
                         </p>
                       </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="text-xs px-3 rounded-xl"
+                        onClick={() => {
+                          setAnalysisResult(item);
+                          setSelectedCrop(cropData.find(c => c.name === item.cropName)?.id || null);
+                          setCurrentView('results');
+                        }}
+                      >
+                        View
+                      </Button>
                     </div>
-                  )}
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
-                  {/* Sensor Metrics */}
-                  {analysisResult.correlatedMetrics && (
-                    <div>
-                      <h3 className="font-medium mb-3">Current Sensor Metrics</h3>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 bg-muted rounded-lg text-center border">
-                          <p className="text-xs text-muted-foreground mb-1">pH</p>
-                          <p className="font-semibold">{analysisResult.correlatedMetrics.pH.toFixed(1)}</p>
-                        </div>
-                        <div className="p-3 bg-muted rounded-lg text-center border">
-                          <p className="text-xs text-muted-foreground mb-1">Humidity</p>
-                          <p className="font-semibold">{analysisResult.correlatedMetrics.humidity.toFixed(0)}%</p>
-                        </div>
-                        <div className="p-3 bg-muted rounded-lg text-center border">
-                          <p className="text-xs text-muted-foreground mb-1">TDS</p>
-                          <p className="font-semibold">{analysisResult.correlatedMetrics.tds.toFixed(0)}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+          {/* Results View */}
+          {currentView === 'results' && analysisResult && selectedCropData && (
+            <div className="p-4 space-y-4">
+              {/* Result Header */}
+              <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold text-lg">Analysis Results</h3>
+                  <Badge variant={analysisResult.is_healthy ? "default" : "destructive"}>
+                    {analysisResult.confidence}% confidence
+                  </Badge>
+                </div>
+                <p className="text-sm text-gray-600 mb-3">{selectedCropData.name}</p>
+                
+                {/* Image */}
+                <img
+                  src={analysisResult.imageUrl}
+                  alt="Analyzed"
+                  className="w-full h-48 rounded-xl object-cover mb-4"
+                />
+
+                {/* Health Status */}
+                <div className={`p-3 rounded-xl border ${
+                  analysisResult.is_healthy 
+                    ? "bg-green-50 border-green-200" 
+                    : "bg-orange-50 border-orange-200"
+                }`}>
+                  <p className="font-semibold mb-1">{analysisResult.prediction}</p>
+                  <p className="text-sm text-gray-600">
+                    Status: {analysisResult.is_healthy ? "Healthy Plant" : "Requires Attention"}
+                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+
+              {/* Recommendations */}
+              <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
+                <h4 className="font-semibold mb-3">Recommendations</h4>
+                <div className={`text-sm p-3 rounded-xl ${
+                  analysisResult.is_healthy 
+                    ? "bg-green-50 text-green-800" 
+                    : "bg-orange-50 text-orange-800"
+                }`}>
+                  {analysisResult.recommendations}
+                </div>
+              </div>
+
+              {/* Sensor Metrics */}
+              {analysisResult.correlatedMetrics && (
+                <div className="bg-white rounded-2xl p-4 border border-gray-200/50 shadow-sm">
+                  <h4 className="font-semibold mb-3">Current Conditions</h4>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="text-center p-3 bg-gray-50 rounded-xl">
+                      <p className="text-xs text-gray-500 mb-1">pH Level</p>
+                      <p className="font-bold">{analysisResult.correlatedMetrics.pH.toFixed(1)}</p>
+                    </div>
+                    <div className="text-center p-3 bg-gray-50 rounded-xl">
+                      <p className="text-xs text-gray-500 mb-1">Humidity</p>
+                      <p className="font-bold">{analysisResult.correlatedMetrics.humidity.toFixed(0)}%</p>
+                    </div>
+                    <div className="text-center p-3 bg-gray-50 rounded-xl">
+                      <p className="text-xs text-gray-500 mb-1">TDS</p>
+                      <p className="font-bold">{analysisResult.correlatedMetrics.tds.toFixed(0)}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" onClick={handleNewAnalysis} className="h-12 rounded-xl">
+                  Analyze Another
+                </Button>
+                <Button onClick={handleBackToCrops} className="h-12 rounded-xl bg-gradient-to-r from-primary to-secondary">
+                  Done
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Upload Modal */}
         {selectedCropData && (
@@ -444,21 +299,6 @@ const PestMonitoring = () => {
             cropName={selectedCropData.name}
             onAnalysisComplete={handleAnalysisComplete}
           />
-        )}
-
-        {/* Mobile Floating Action Button */}
-        {currentView === 'crops' && selectedCrop && (
-          <div className="fixed bottom-6 left-4 right-4 z-50 lg:hidden">
-            <Button 
-              size="lg" 
-              onClick={() => setCurrentView('upload')}
-              className="w-full h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 active:scale-95 rounded-2xl gap-3"
-            >
-              <Upload className="h-6 w-6" />
-              <span className="text-lg">Continue to AI Analysis</span>
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-          </div>
         )}
       </div>
     </div>

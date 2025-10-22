@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, TrendingUp, Share } from "lucide-react";
-import { isMobile, shareContent, saveFile } from "@/utils/mobile";
+import { Download, TrendingUp } from "lucide-react";
+import { exportCSVMobile } from "@/utils/mobile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,7 @@ type MetricType = "pH" | "air_temp" | "water_temp" | "tds" | "humidity";
 
 const Metrics = () => {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("pH");
+  const [isExporting, setIsExporting] = useState(false);
 
   const metricsConfig = {
     pH: { data: phHistory, label: "pH Level", unit: "pH", optimal: 6.5 },
@@ -57,7 +58,7 @@ const Metrics = () => {
     };
   });
 
-  const [exportDays, setExportDays] = useState(1);
+
 
   // Enhanced mobile detection
   const isMobileDevice = () => {
@@ -69,126 +70,80 @@ const Metrics = () => {
   };
 
   const handleExport = async (days: number) => {
+    console.log(`Starting CSV export for ${days} days`);
+    setIsExporting(true);
+    
+    // Add a small delay to ensure UI updates properly on mobile
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
     try {
       const dataToExport = currentConfig.data.slice(-days * 24);
       
-      // Generate CSV content
-      const headers = ["Timestamp", "Value", "Unit"];
+      // Generate CSV content with proper formatting and BOM for Excel compatibility
+      const headers = ["Timestamp", "Metric", "Value", "Unit"];
       const csvRows = [headers.join(",")];
       
       dataToExport.forEach((item) => {
         const row = [
-          new Date(item.ts).toISOString(),
+          `"${new Date(item.ts).toLocaleString()}"`, // Quoted timestamp for better compatibility
+          `"${selectedMetric}"`, // Include metric name
           item.value.toFixed(2),
-          currentConfig.unit
+          `"${currentConfig.unit}"`
         ];
         csvRows.push(row.join(","));
       });
       
-      const csvContent = csvRows.join("\n");
-      const filename = `${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
+      // Add BOM for proper Excel UTF-8 handling
+      const csvContent = '\uFEFF' + csvRows.join("\n");
+      const filename = `AeroGrowth_${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
+      const title = 'AeroGrowth Metrics Export';
+      const description = `${selectedMetric} metrics data for ${days} day${days > 1 ? 's' : ''} - AeroGrowth Vertical Farming`;
       
-      // Check if we're on mobile and use different approach
-      const isOnMobile = isMobile() || isMobileDevice();
+      console.log(`Exporting CSV: ${filename}`);
       
-      if (isOnMobile) {
-        // Try Capacitor native sharing first
-        if (isMobile()) {
-          try {
-            const success = await saveFile(csvContent, filename);
-            if (success) {
-              await shareContent(
-                'CSV Export',
-                `${selectedMetric} metrics for ${days} day${days > 1 ? 's' : ''}`,
-                undefined
-              );
-              console.log(`${days} day${days > 1 ? 's' : ''} CSV exported and shared successfully!`);
-              return;
-            }
-          } catch (error) {
-            console.log('Native sharing failed, falling back to web methods');
-          }
-        }
-        // Mobile-friendly approach using File System Access API or fallback
-        if ('showSaveFilePicker' in window) {
-          try {
-            // Use File System Access API for modern browsers
-            const fileHandle = await (window as any).showSaveFilePicker({
-              suggestedName: filename,
-              types: [{
-                description: 'CSV files',
-                accept: { 'text/csv': ['.csv'] },
-              }],
-            });
-            
-            const writable = await fileHandle.createWritable();
-            await writable.write(csvContent);
-            await writable.close();
-            
-            console.log(`${days} day${days > 1 ? 's' : ''} CSV saved successfully!`);
-            return;
-          } catch (err) {
-            // User cancelled or API not supported, fall through to blob method
-          }
-        }
-        
-        // Fallback for mobile: Create blob with proper MIME type and try to open
-        const blob = new Blob([csvContent], { 
-          type: 'text/csv;charset=utf-8;' 
-        });
-        
-        // Try to use navigator.share if available (mobile sharing)
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: 'text/csv' })] })) {
-          try {
-            await navigator.share({
-              files: [new File([blob], filename, { type: 'text/csv' })],
-              title: 'Export CSV Data',
-              text: `${selectedMetric} metrics for ${days} day${days > 1 ? 's' : ''}`
-            });
-            console.log(`${days} day${days > 1 ? 's' : ''} CSV shared successfully!`);
-            return;
-          } catch (err) {
-            // Share failed, fall through to download
-          }
-        }
-        
-        // Mobile fallback: Open in new tab/window for user to save manually
-        const dataUrl = `data:text/csv;charset=utf-8,${encodeURIComponent(csvContent)}`;
-        const newWindow = window.open(dataUrl, '_blank');
-        
-        if (newWindow) {
-          console.log(`${days} day${days > 1 ? 's' : ''} CSV opened in new tab. Use "Save As" to download.`);
+      // Use the improved mobile CSV export function
+      const result = await exportCSVMobile(csvContent, filename, title, description);
+      
+      if (result.success) {
+        console.log('CSV export successful:', result.message);
+        // Use a more subtle success message for mobile
+        if (isMobileDevice()) {
+          toast.success('CSV file ready for download/share!');
         } else {
-          // If popup blocked, use traditional blob download
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = filename;
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-          console.log(`${days} day${days > 1 ? 's' : ''} CSV download initiated!`);
+          toast.success(result.message);
         }
       } else {
-        // Desktop approach - traditional blob download
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = filename;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        console.log(`${days} day${days > 1 ? 's' : ''} CSV downloaded successfully!`);
+        console.error('CSV export failed:', result.message);
+        toast.error(result.message);
       }
     } catch (error) {
       console.error('Export failed:', error);
-      console.error('Failed to export CSV. Please try again.');
+      const errorMessage = 'Failed to export CSV. Please try again.';
+      toast.error(errorMessage);
+    } finally {
+      // Add a small delay before re-enabling the button to prevent double-clicks
+      setTimeout(() => {
+        console.log('CSV export process completed');
+        setIsExporting(false);
+      }, 500);
     }
+  };
+
+  // Wrapper function to handle CSV export with navigation bypass
+  const handleCSVExportClick = (days: number) => {
+    console.log(`CSV export button clicked for ${days} days`);
+    
+    // Temporarily disable navigation prevention for this action
+    const body = document.body;
+    body.classList.add('csv-export-active');
+    
+    // Execute the export
+    handleExport(days).finally(() => {
+      // Re-enable navigation prevention after a delay
+      setTimeout(() => {
+        body.classList.remove('csv-export-active');
+      }, 1000);
+    });
   };
 
   return (
@@ -203,22 +158,78 @@ const Metrics = () => {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
+              <Button 
+                disabled={isExporting}
+                className="min-h-[44px] min-w-[120px] touch-manipulation csv-export-button"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
+                data-csv-export="true"
+                data-interactive="true"
+              >
+                <Download className={`h-4 w-4 mr-2 ${isExporting ? 'animate-spin' : ''}`} />
+                {isExporting ? 'Exporting...' : 'Export CSV'}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => handleExport(1)}>
+            <DropdownMenuContent 
+              align="end" 
+              className="min-w-[160px] csv-export-menu"
+              sideOffset={8}
+              data-csv-menu="true"
+              data-interactive="true"
+            >
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCSVExportClick(1);
+                }} 
+                disabled={isExporting}
+                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
+                data-csv-item="1day"
+                data-interactive="true"
+              >
+                <Download className="h-4 w-4 mr-2" />
                 Export 1 Day
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport(2)}>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCSVExportClick(2);
+                }} 
+                disabled={isExporting}
+                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
+                data-csv-item="2days"
+                data-interactive="true"
+              >
+                <Download className="h-4 w-4 mr-2" />
                 Export 2 Days
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport(7)}>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCSVExportClick(7);
+                }} 
+                disabled={isExporting}
+                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
+                data-csv-item="7days"
+                data-interactive="true"
+              >
+                <Download className="h-4 w-4 mr-2" />
                 Export 7 Days
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport(30)}>
+              <DropdownMenuItem 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCSVExportClick(30);
+                }} 
+                disabled={isExporting}
+                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
+                data-csv-item="1month"
+                data-interactive="true"
+              >
+                <Download className="h-4 w-4 mr-2" />
                 Export 1 Month
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -21,6 +21,17 @@ export const initializeMobileApp = async () => {
         console.log('Device is ready');
       });
 
+      // Optimize file downloads for mobile
+      if (Capacitor.getPlatform() === 'android') {
+        // Request storage permissions for file downloads
+        try {
+          // This will be handled by Capacitor's permission system
+          console.log('Android platform detected - file permissions will be requested as needed');
+        } catch (error) {
+          console.log('Permission request not needed or failed:', error);
+        }
+      }
+
       // Handle back button on Android
       if (Capacitor.getPlatform() === 'android') {
         document.addEventListener('backbutton', (e) => {
@@ -41,16 +52,16 @@ export const initializeMobileApp = async () => {
       document.body.classList.add('mobile-app');
       document.body.classList.add(`platform-${Capacitor.getPlatform()}`);
       document.body.classList.add('mobile-scroll');
-      
-      // Prevent zoom on double tap
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', (event) => {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-          event.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
+
+      // Enable smooth scrolling for mobile
+      document.documentElement.style.scrollBehavior = 'smooth';
+      document.body.style.scrollBehavior = 'smooth';
+
+      // Allow context menu to enable all touch interactions
+      // Context menu prevention removed to enable scrolling
+
+      // Allow text selection to enable all touch interactions
+      // Text selection prevention removed to enable scrolling
 
       // Optimize for mobile performance
       if ('serviceWorker' in navigator) {
@@ -68,7 +79,28 @@ export const initializeMobileApp = async () => {
         document.head.appendChild(viewport);
       }
       viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no';
-      
+
+      // Import and use mobile detection utilities
+      const { forceMenuVisibility, preventAccidentalNavigation } = await import('@/utils/mobileDetection');
+
+      // Force mobile menu visibility on orientation change
+      const handleOrientationChange = () => {
+        setTimeout(() => {
+          // Trigger a resize event to update mobile view detection
+          window.dispatchEvent(new Event('resize'));
+          forceMenuVisibility();
+        }, 150);
+      };
+
+      window.addEventListener('orientationchange', handleOrientationChange);
+      document.addEventListener('deviceready', handleOrientationChange);
+
+      // Initial force of menu visibility
+      setTimeout(forceMenuVisibility, 500);
+
+      // Prevent accidental navigation
+      preventAccidentalNavigation();
+
       // Add theme color meta tag
       let themeColor = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement;
       if (!themeColor) {
