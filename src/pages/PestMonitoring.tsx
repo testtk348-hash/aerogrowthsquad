@@ -150,9 +150,9 @@ const PestMonitoring = () => {
                 <p className="text-sm text-blue-700">Select your crop → Take a photo → Get instant AI analysis</p>
               </div>
 
-              {/* Crop Grid */}
-              <div className="grid grid-cols-2 gap-3">
-                {cropData.map((crop) => (
+              {/* Crop Grid - Only 4 Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                {cropData.slice(0, 4).map((crop) => (
                   <CropCard
                     key={crop.id}
                     {...crop}
