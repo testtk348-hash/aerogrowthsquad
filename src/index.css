@@ -2814,4 +2814,82 @@ bile Upload Modal Positioning Fix */
     border-radius: 12px !important;
     padding: 12px 20px !important;
   }
+}/* Mobile
+ Upload Modal - Full Screen Optimization */
+@media (max-width: 768px) {
+  
+  /* Force full screen modal on mobile */
+  .mobile-app [data-radix-dialog-content] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    z-index: 10000 !important;
+    overflow: hidden !important;
+  }
+
+  /* Ensure modal overlay covers full screen */
+  .mobile-app [data-radix-dialog-overlay] {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9999 !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* Ensure buttons are properly sized for mobile */
+  .mobile-app [data-radix-dialog-content] button {
+    min-height: 48px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    font-size: 16px !important;
+  }
+
+  /* Optimize modal content for mobile */
+  .mobile-app [data-radix-dialog-content] .flex.flex-col {
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  /* Ensure scrollable content area */
+  .mobile-app [data-radix-dialog-content] .flex-1.overflow-y-auto {
+    -webkit-overflow-scrolling: touch !important;
+    overflow-y: auto !important;
+  }
+
+  /* Safe area handling for mobile devices */
+  .mobile-app [data-radix-dialog-content] .flex-shrink-0:first-child {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+  }
+
+  .mobile-app [data-radix-dialog-content] .flex-shrink-0:last-child {
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  }
+}
+
+/* Tablet and Desktop - Centered Modal */
+@media (min-width: 769px) {
+  
+  .mobile-app [data-radix-dialog-content] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    max-width: 500px !important;
+    max-height: 90vh !important;
+    margin: 0 !important;
+    z-index: 10000 !important;
+    border-radius: 16px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
 }

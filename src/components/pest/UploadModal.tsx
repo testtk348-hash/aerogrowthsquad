@@ -145,194 +145,208 @@ export const UploadModal = ({ open, onClose, cropName, onAnalysisComplete }: Upl
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[90vw] max-w-md bg-white rounded-2xl border-0 p-0 overflow-hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+      <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 p-0 rounded-none border-0 bg-white overflow-hidden md:w-[90vw] md:max-w-md md:h-auto md:rounded-2xl md:fixed md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2">
         
-        {/* Centered Modal Layout */}
-        <div className="relative w-full">
+        {/* Mobile-First Full Screen Layout */}
+        <div className="relative w-full h-full flex flex-col">
           
-          {/* Close Button */}
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={handleClose}
-            className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/90 hover:bg-white shadow-lg z-10"
-          >
-            <X className="h-4 w-4 text-gray-600" />
-          </Button>
-
-          {/* Content */}
-          <div className="p-6 max-h-[80vh] overflow-y-auto">
-            
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <Leaf className="h-6 w-6 text-white" />
+          {/* Header with Close Button */}
+          <div className="flex-shrink-0 flex items-center justify-between p-4 bg-white border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg">
+                <Leaf className="h-4 w-4 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-1">AI Plant Analysis</h2>
-              <p className="text-sm text-primary font-medium">{cropName}</p>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">AI Plant Analysis</h2>
+                <p className="text-xs text-primary font-medium">{cropName}</p>
+              </div>
             </div>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleClose}
+              className="h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <X className="h-5 w-5 text-gray-600" />
+            </Button>
+          </div>
 
+          {/* Main Content - Scrollable */}
+          <div className="flex-1 overflow-y-auto p-4">
             {result ? (
-              /* Analysis Results */
-              <div className="space-y-4">
+              /* Analysis Results - Mobile Optimized */
+              <div className="space-y-6">
                 <div className="relative">
                   <img 
                     src={result.imageUrl} 
                     alt="Analyzed" 
-                    className="w-full h-32 object-cover rounded-xl border border-gray-200" 
+                    className="w-full h-48 md:h-32 object-cover rounded-2xl border border-gray-200 shadow-sm" 
                   />
                 </div>
                 
                 {/* Health Status */}
-                <div className={`p-4 rounded-xl border ${
+                <div className={`p-6 rounded-2xl border-2 ${
                   result.is_healthy 
                     ? "bg-green-50 border-green-200" 
                     : "bg-orange-50 border-orange-200"
                 }`}>
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-4 mb-4">
                     {result.is_healthy ? (
-                      <CheckCircle className="h-6 w-6 text-green-600" />
+                      <CheckCircle className="h-8 w-8 text-green-600 flex-shrink-0" />
                     ) : (
-                      <AlertTriangle className="h-6 w-6 text-orange-600" />
+                      <AlertTriangle className="h-8 w-8 text-orange-600 flex-shrink-0" />
                     )}
                     <div>
-                      <p className="font-bold text-lg">{result.prediction}</p>
+                      <p className="font-bold text-xl mb-1">{result.prediction}</p>
                       <p className="text-sm opacity-80">{result.confidence}% confidence</p>
                     </div>
                   </div>
-                  <p className="text-sm font-medium">
+                  <p className="text-base font-medium">
                     Status: {result.is_healthy ? "Healthy Plant" : "Requires Attention"}
                   </p>
                 </div>
 
                 {/* Recommendations */}
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                  <h4 className="font-semibold mb-2 text-sm">Recommendations</h4>
-                  <p className="text-sm text-gray-700">{result.recommendations}</p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setResult(null);
-                      setPreview(null);
-                    }}
-                    className="h-12 rounded-xl"
-                  >
-                    Analyze Another
-                  </Button>
-                  <Button 
-                    onClick={handleDone}
-                    className="h-12 rounded-xl bg-gradient-to-r from-primary to-secondary"
-                  >
-                    Done
-                  </Button>
+                <div className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-6">
+                  <h4 className="font-bold mb-3 text-base">Recommendations</h4>
+                  <p className="text-base text-gray-700 leading-relaxed">{result.recommendations}</p>
                 </div>
               </div>
             ) : uploading ? (
-              /* Analysis Progress */
-              <div className="text-center space-y-4 py-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <div className="animate-spin rounded-full h-8 w-8 border-3 border-white border-t-transparent"></div>
+              /* Analysis Progress - Mobile Optimized */
+              <div className="text-center space-y-6 py-12">
+                <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900 text-lg mb-2">Analyzing...</p>
-                  <p className="text-gray-600 text-sm mb-4">Detecting plant health</p>
-                  <Progress value={progress} className="h-2 bg-gray-200 rounded-full" />
-                  <p className="text-xs text-gray-500 mt-2">{progress}% complete</p>
+                  <p className="font-bold text-gray-900 text-2xl mb-3">Analyzing...</p>
+                  <p className="text-gray-600 text-lg mb-6">Detecting plant health</p>
+                  <Progress value={progress} className="h-3 bg-gray-200 rounded-full max-w-xs mx-auto" />
+                  <p className="text-sm text-gray-500 mt-3 font-medium">{progress}% complete</p>
                 </div>
               </div>
             ) : preview ? (
-              /* Image Preview & Analysis */
-              <div className="space-y-4">
+              /* Image Preview & Analysis - Mobile Optimized */
+              <div className="space-y-6">
                 <div className="relative">
                   <img 
                     src={preview} 
                     alt="Preview" 
-                    className="w-full h-48 object-cover rounded-xl border border-gray-200" 
+                    className="w-full h-64 md:h-48 object-cover rounded-2xl border-2 border-gray-200 shadow-sm" 
                   />
                   <Button
                     variant="secondary"
                     size="icon"
-                    className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/90 hover:bg-white shadow-lg"
+                    className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/95 hover:bg-white shadow-lg border border-gray-200"
                     onClick={() => setPreview(null)}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-5 w-5" />
                   </Button>
                 </div>
                 
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-green-800 text-sm">Ready for Analysis</p>
-                      <p className="text-xs text-green-600">Tap analyze to get results</p>
+                      <p className="font-bold text-green-800 text-base">Ready for Analysis</p>
+                      <p className="text-sm text-green-600">Tap analyze to get results</p>
                     </div>
                   </div>
                 </div>
-
-                <Button
-                  className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-bold shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl"
-                  onClick={analyzeImage}
-                >
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Analyze with AI
-                </Button>
               </div>
             ) : (
-              /* Upload Interface */
-              <div className="space-y-4">
+              /* Upload Interface - Mobile Optimized */
+              <div className="space-y-6">
                 
                 {/* Upload Zone */}
                 <div
-                  className="border-2 border-dashed border-primary/40 rounded-xl p-6 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all duration-200"
+                  className="border-3 border-dashed border-primary/40 rounded-2xl p-8 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all duration-200 active:scale-[0.98]"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Upload className="h-6 w-6 text-primary" />
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Upload className="h-8 w-8 text-primary" />
                   </div>
-                  <p className="font-bold text-gray-900 mb-1">Upload Plant Image</p>
-                  <p className="text-sm text-gray-600 mb-2">Select from device storage</p>
-                  <p className="text-xs text-gray-500">JPG, PNG, WebP • Max 8MB</p>
+                  <p className="font-bold text-gray-900 text-lg mb-2">Upload Plant Image</p>
+                  <p className="text-base text-gray-600 mb-3">Select from device storage</p>
+                  <p className="text-sm text-gray-500">JPG, PNG, WebP • Max 8MB</p>
                 </div>
 
                 {/* Camera & Gallery Buttons */}
                 {isMobile() && (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     <Button
                       variant="outline"
-                      className="h-12 border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-xl"
+                      className="h-16 border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-2xl active:scale-[0.98]"
                       onClick={handleTakePicture}
                     >
-                      <Camera className="h-5 w-5 mr-2 text-primary" />
-                      <span className="font-semibold">Camera</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <Camera className="h-6 w-6 text-primary" />
+                        <span className="font-bold text-base">Camera</span>
+                      </div>
                     </Button>
                     <Button
                       variant="outline"
-                      className="h-12 border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-xl"
+                      className="h-16 border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200 rounded-2xl active:scale-[0.98]"
                       onClick={handleSelectFromGallery}
                     >
-                      <ImageIcon className="h-5 w-5 mr-2 text-primary" />
-                      <span className="font-semibold">Gallery</span>
+                      <div className="flex flex-col items-center gap-2">
+                        <ImageIcon className="h-6 w-6 text-primary" />
+                        <span className="font-bold text-base">Gallery</span>
+                      </div>
                     </Button>
                   </div>
                 )}
 
                 {/* Tips */}
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-600" />
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-6 w-6 text-amber-600 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-amber-800 text-sm">Best Results</p>
-                      <p className="text-xs text-amber-700">Clear, well-lit leaf photos work best</p>
+                      <p className="font-bold text-amber-800 text-base">Best Results</p>
+                      <p className="text-sm text-amber-700">Clear, well-lit leaf photos work best</p>
                     </div>
                   </div>
                 </div>
               </div>
             )}
           </div>
+
+          {/* Bottom Action Bar - Fixed */}
+          {(preview && !uploading) && (
+            <div className="flex-shrink-0 p-4 bg-white border-t border-gray-100">
+              <Button
+                className="w-full h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-bold shadow-lg hover:shadow-xl transition-all duration-200 rounded-2xl active:scale-[0.98]"
+                onClick={analyzeImage}
+              >
+                <Sparkles className="h-6 w-6 mr-3" />
+                <span className="text-lg">Analyze with AI</span>
+              </Button>
+            </div>
+          )}
+
+          {/* Bottom Action Bar for Results */}
+          {result && (
+            <div className="flex-shrink-0 p-4 bg-white border-t border-gray-100">
+              <div className="grid grid-cols-2 gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setResult(null);
+                    setPreview(null);
+                  }}
+                  className="h-14 rounded-2xl border-2 font-bold text-base active:scale-[0.98]"
+                >
+                  Analyze Another
+                </Button>
+                <Button 
+                  onClick={handleDone}
+                  className="h-14 rounded-2xl bg-gradient-to-r from-primary to-secondary font-bold text-base active:scale-[0.98]"
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          )}
 
           <input
             ref={fileInputRef}
