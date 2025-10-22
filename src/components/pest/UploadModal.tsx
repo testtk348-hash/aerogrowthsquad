@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Upload, Camera, X, CheckCircle, Image as ImageIcon, Sparkles, Zap, ArrowRight, Leaf, AlertTriangle } from "lucide-react";
+import { Upload, Camera, X, CheckCircle, Image as ImageIcon, Sparkles, Leaf, AlertTriangle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { isMobile, takePicture, selectFromGallery } from "@/utils/mobile";
 import { MOBILE_CONFIG } from "@/config/mobile";
@@ -145,10 +145,10 @@ export const UploadModal = ({ open, onClose, cropName, onAnalysisComplete }: Upl
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="w-[90vw] max-w-md mx-auto bg-white rounded-2xl border-0 p-0 overflow-hidden">
+      <DialogContent className="w-[90vw] max-w-md bg-white rounded-2xl border-0 p-0 overflow-hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
         
         {/* Centered Modal Layout */}
-        <div className="relative">
+        <div className="relative w-full">
           
           {/* Close Button */}
           <Button 
@@ -161,7 +161,7 @@ export const UploadModal = ({ open, onClose, cropName, onAnalysisComplete }: Upl
           </Button>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-6 max-h-[80vh] overflow-y-auto">
             
             {/* Header */}
             <div className="text-center mb-6">

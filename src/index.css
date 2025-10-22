@@ -2738,4 +2738,80 @@ obile Select Parameter Optimizations */
 .mobile-app .select-item-mobile:focus-visible {
   outline: 2px solid rgba(5, 150, 105, 0.5) !important;
   outline-offset: 1px !important;
+}/* Mo
+bile Upload Modal Positioning Fix */
+@media (max-width: 1024px) {
+  
+  /* Ensure modal is properly centered and accessible on mobile */
+  .mobile-app [data-radix-dialog-content] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    max-width: 400px !important;
+    max-height: 90vh !important;
+    margin: 0 !important;
+    z-index: 10000 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Ensure modal overlay is properly positioned */
+  .mobile-app [data-radix-dialog-overlay] {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9999 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Ensure buttons in modal are properly sized for mobile */
+  .mobile-app [data-radix-dialog-content] button {
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Fix for modal content scrolling */
+  .mobile-app [data-radix-dialog-content] > div {
+    max-height: calc(90vh - 32px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Ensure proper spacing from screen edges */
+  .mobile-app [data-radix-dialog-content] {
+    margin: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px) !important;
+  }
+}
+
+/* CSV Export Button Alignment Fix */
+@media (max-width: 768px) {
+  
+  /* Ensure CSV export buttons are properly aligned on mobile */
+  .mobile-app .card-hover .flex.flex-col.md\\:flex-row {
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .mobile-app .card-hover .flex.flex-col.md\\:flex-row button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Better spacing for metric sections */
+  .mobile-app .space-y-6 > div {
+    margin-bottom: 24px !important;
+  }
+
+  /* Ensure proper button sizing */
+  .mobile-app button[data-csv-export] {
+    min-height: 48px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    border-radius: 12px !important;
+    padding: 12px 20px !important;
+  }
 }

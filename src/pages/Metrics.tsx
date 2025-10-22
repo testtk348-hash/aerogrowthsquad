@@ -98,7 +98,8 @@ const Metrics = () => {
     
     try {
       const config = metricsConfig[metricKey];
-      const dataToExport = config.data;
+      // Limit to 30 rows as requested
+      const dataToExport = config.data.slice(-30);
       
       console.log(`Exporting ${dataToExport.length} data points for ${metricKey}`);
       
@@ -189,7 +190,7 @@ const Metrics = () => {
               {/* Metric Header */}
               <Card className="card-hover">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <div 
                         className="p-3 rounded-lg"
@@ -209,7 +210,7 @@ const Metrics = () => {
                         handleCSVExportClick(metricKey as MetricType);
                       }}
                       disabled={isExporting[metricKey]}
-                      className="min-h-[44px] min-w-[120px] touch-manipulation"
+                      className="min-h-[44px] min-w-[120px] touch-manipulation self-start md:self-center"
                       style={{ WebkitTapHighlightColor: 'transparent' }}
                       data-csv-export="true"
                       data-interactive="true"
