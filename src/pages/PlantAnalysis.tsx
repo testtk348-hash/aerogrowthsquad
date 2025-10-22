@@ -5,7 +5,7 @@ import { Upload, Camera, X, CheckCircle, Image as ImageIcon, Sparkles, Leaf, Ale
 import { Progress } from "@/components/ui/progress";
 import { isMobile, takePicture, selectFromGallery } from "@/utils/mobile";
 import { MOBILE_CONFIG } from "@/config/mobile";
-import { offlinePlantModel } from "@/services/offlineML";
+import { realPlantHealthModel } from "@/services/realPlantHealthModel";
 import { cropData } from "@/lib/mockData";
 
 export interface AnalysisResult {
@@ -96,8 +96,8 @@ const PlantAnalysis = () => {
         });
       }, 300);
 
-      // Use offline ML model
-      const result = await offlinePlantModel.analyzeImage(preview);
+      // Use real plant health model
+      const result = await realPlantHealthModel.classifyImage(preview);
       
       clearInterval(progressInterval);
       setProgress(100);

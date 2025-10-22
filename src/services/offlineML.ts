@@ -15,15 +15,15 @@ class OfflinePlantDiseaseModel {
       // Try to load the actual TensorFlow.js model from the bundled assets
       console.log('🔄 Loading TensorFlow.js model from bundled assets...');
       
-      // First, try to load a converted TensorFlow.js model
+      // First, try to load the converted plant health classifier model
       try {
-        this.model = await tf.loadLayersModel('/models/model.json');
+        this.model = await tf.loadLayersModel('/models/plant_health_classifier/model.json');
         this.modelSize = this.calculateModelSize();
         this.isLoaded = true;
-        console.log(`✅ Real TensorFlow.js model loaded successfully (${this.modelSize.toFixed(1)} MB)`);
+        console.log(`✅ Plant health classifier model loaded successfully (${this.modelSize.toFixed(1)} MB)`);
         return;
       } catch (modelError) {
-        console.log('📦 Real model not found, creating optimized demo model...');
+        console.log('📦 Plant health classifier not found, creating optimized demo model...');
       }
       
       // If real model fails, create an optimized demo model
@@ -39,31 +39,9 @@ class OfflinePlantDiseaseModel {
   }
 
   private async loadClassNames(): Promise<void> {
-    try {
-      const response = await fetch('/models/class_names.json');
-      if (response.ok) {
-        this.classNames = await response.json();
-        console.log(`📋 Loaded ${this.classNames.length} class names`);
-      } else {
-        throw new Error('Class names file not found');
-      }
-    } catch (error) {
-      console.log('⚠️ Using default class names');
-      this.classNames = [
-        'Healthy',
-        'Early Blight',
-        'Late Blight',
-        'Leaf Mold',
-        'Septoria Leaf Spot',
-        'Spider Mites',
-        'Target Spot',
-        'Yellow Leaf Curl Virus',
-        'Mosaic Virus',
-        'Bacterial Spot',
-        'Nutrient Deficiency',
-        'Pest Damage'
-      ];
-    }
+    // For binary classification (healthy/unhealthy)
+    this.classNames = ['Affected Plant', 'Healthy Plant'];
+    console.log(`📋 Using binary classification: ${this.classNames.join(', ')}`);
   }
 
   private calculateModelSize(): number {
@@ -81,22 +59,15 @@ class OfflinePlantDiseaseModel {
   }
 
   private async createOptimizedDemoModel(): Promise<tf.LayersModel> {
-    // Create an optimized demo model for plant disease classification
-    // This model is smaller and faster for mobile devices
+    // Create a binary classification model for plant health (healthy/unhealthy)
+    // This matches the structure of your plant_health_classifier.h5 model
     const model = tf.sequential({
       layers: [
-        // Smaller input size for mobile optimization
+        // Input layer for 224x224 RGB images
         tf.layers.conv2d({
           inputShape: [224, 224, 3],
-          filters: 16, // Reduced filters for mobile
+          filters: 32,
           kernelSize: 3,
-          activation: 'relu',
-          padding: 'same'
-        }),
-        tf.layers.maxPooling2d({ poolSize: 2 }),
-        tf.layers.conv2d({ 
-          filters: 32, 
-          kernelSize: 3, 
           activation: 'relu',
           padding: 'same'
         }),
@@ -107,21 +78,29 @@ class OfflinePlantDiseaseModel {
           activation: 'relu',
           padding: 'same'
         }),
-        tf.layers.globalAveragePooling2d({}), // More efficient than flatten + dense
-        tf.layers.dense({ units: 64, activation: 'relu' }), // Smaller dense layer
-        tf.layers.dropout({ rate: 0.3 }), // Reduced dropout
+        tf.layers.maxPooling2d({ poolSize: 2 }),
+        tf.layers.conv2d({ 
+          filters: 128, 
+          kernelSize: 3, 
+          activation: 'relu',
+          padding: 'same'
+        }),
+        tf.layers.maxPooling2d({ poolSize: 2 }),
+        tf.layers.flatten(),
+        tf.layers.dense({ units: 128, activation: 'relu' }),
+        tf.layers.dropout({ rate: 0.5 }),
         tf.layers.dense({ 
-          units: this.classNames.length, 
-          activation: 'softmax',
+          units: 1, // Binary classification - single output
+          activation: 'sigmoid', // Sigmoid for binary classification
           name: 'predictions'
         }),
       ],
     });
 
-    // Compile the model with mobile-optimized settings
+    // Compile the model for binary classification
     model.compile({
       optimizer: tf.train.adam(0.001),
-      loss: 'categoricalCrossentropy',
+      loss: 'binaryCrossentropy', // Binary cross-entropy for binary classification
       metrics: ['accuracy'],
     });
 
@@ -163,20 +142,20 @@ class OfflinePlantDiseaseModel {
       // Preprocess the image
       const tensor = await this.preprocessImage(imageDataUrl);
       
-      // Make prediction
+      // Make prediction (binary classification)
       const prediction = this.model.predict(tensor) as tf.Tensor;
       const predictionData = await prediction.data();
       
-      // Get the class with highest probability
-      const maxIndex = predictionData.indexOf(Math.max(...Array.from(predictionData)));
-      const confidence = Math.round(predictionData[maxIndex] * 100);
-      const predictedClass = this.classNames[maxIndex];
+      // For binary classification, we get a single value between 0 and 1
+      const rawPrediction = predictionData[0];
+      const threshold = 0.5;
+      const isHealthy = rawPrediction > threshold;
+      const confidence = Math.round((isHealthy ? rawPrediction : (1 - rawPrediction)) * 100);
+      const predictedClass = isHealthy ? 'Healthy Plant' : 'Affected Plant (Pest/Disease detected)';
       
       // Clean up tensors
       tensor.dispose();
       prediction.dispose();
-
-      const isHealthy = predictedClass === 'Healthy';
       
       return {
         prediction: predictedClass,
@@ -184,9 +163,9 @@ class OfflinePlantDiseaseModel {
         is_healthy: isHealthy,
         recommendations: this.getRecommendations(predictedClass, isHealthy),
         model_info: {
-          raw_prediction_value: predictionData[maxIndex],
-          model_threshold: 0.5,
-          interpretation: `TensorFlow.js model confidence: ${confidence}%. ${isHealthy ? 'Above' : 'Below'} healthy threshold.`
+          raw_prediction_value: rawPrediction,
+          model_threshold: threshold,
+          interpretation: `Binary classification: ${rawPrediction.toFixed(3)} ${isHealthy ? '>' : '<='} threshold ${threshold}`
         }
       };
     } catch (error) {
@@ -316,33 +295,11 @@ class OfflinePlantDiseaseModel {
   }
 
   private getRecommendations(prediction: string, isHealthy: boolean): string {
-    const recommendations: { [key: string]: string } = {
-      'Healthy Leaf': 'Your plant appears healthy! Continue with current care routine. Monitor regularly for any changes in leaf color or texture. Maintain optimal pH (6.0-6.5) and ensure adequate lighting.',
-      
-      'Early Blight': 'Early blight detected. Remove affected leaves immediately and dispose of them away from healthy plants. Improve air circulation around plants. Avoid overhead watering and water at soil level. Consider applying copper-based fungicide. Increase spacing between plants.',
-      
-      'Late Blight': 'Late blight is serious and spreads quickly. Remove all affected plant parts immediately. Improve ventilation and reduce humidity. Apply fungicide treatment. Consider removing severely affected plants to prevent spread to healthy ones.',
-      
-      'Leaf Mold': 'Leaf mold detected. Reduce humidity levels and improve air circulation. Remove affected leaves. Avoid overhead watering. Ensure adequate spacing between plants. Consider using resistant varieties in future plantings.',
-      
-      'Septoria Leaf Spot': 'Septoria leaf spot identified. Remove affected leaves and improve air circulation. Avoid overhead watering. Apply copper-based fungicide. Ensure plants have adequate spacing and support for good airflow.',
-      
-      'Spider Mites': 'Spider mites detected. Increase humidity around plants. Use insecticidal soap or neem oil treatment. Remove heavily infested leaves. Introduce beneficial insects like ladybugs. Ensure plants are not water-stressed.',
-      
-      'Target Spot': 'Target spot fungal infection detected. Remove affected leaves immediately. Improve air circulation and reduce leaf wetness. Apply appropriate fungicide. Avoid overhead irrigation and ensure good drainage.',
-      
-      'Yellow Leaf Curl Virus': 'Viral infection detected. Remove affected plants immediately to prevent spread. Control whitefly populations as they transmit this virus. Use reflective mulch to deter insects. Plant virus-resistant varieties.',
-      
-      'Mosaic Virus': 'Mosaic virus detected. Remove infected plants immediately. Disinfect tools between plants. Control aphid populations. Avoid handling plants when wet. Use virus-free seeds and resistant varieties.',
-      
-      'Bacterial Spot': 'Bacterial spot infection detected. Remove affected leaves and improve air circulation. Avoid overhead watering. Apply copper-based bactericide. Ensure good sanitation practices and tool disinfection.',
-      
-      'Nutrient Deficiency': 'Nutrient deficiency detected. Check and adjust pH levels (6.0-6.5 for most plants). Test nutrient solution concentration. Increase nitrogen if leaves are yellowing. Ensure balanced NPK ratios. Check root health for nutrient uptake issues.',
-      
-      'Pest Damage': 'Pest damage detected. Inspect plants carefully for insects. Use organic pest control methods like neem oil or insecticidal soap. Introduce beneficial insects. Remove heavily damaged leaves. Increase monitoring frequency.'
-    };
-
-    return recommendations[prediction] || 'Monitor plant health closely and maintain optimal growing conditions. Ensure proper pH, lighting, and nutrient levels. Remove any damaged or diseased plant material promptly.';
+    if (isHealthy) {
+      return 'Your plant appears healthy! Continue with current care routine. Monitor regularly for any changes in leaf color or texture. Maintain optimal pH (6.0-6.5), ensure adequate lighting, and keep consistent watering schedule. Check for pests weekly as prevention.';
+    } else {
+      return 'Plant shows signs of pest or disease. Immediate actions: 1) Isolate the plant to prevent spread, 2) Carefully inspect leaves and stems for pests, 3) Check soil moisture and drainage, 4) Remove any damaged or discolored leaves, 5) Consider applying organic treatment like neem oil, 6) Monitor closely for 48-72 hours and adjust care as needed.';
+    }
   }
 
   isModelLoaded(): boolean {
