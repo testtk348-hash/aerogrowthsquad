@@ -1,7 +1,7 @@
 {
   "format": "layers-model",
   "generatedBy": "keras v2.12.0",
-  "convertedBy": "TensorFlow.js Converter v4.0.0",
+  "convertedBy": "Manual Conversion v1.0.0",
   "modelTopology": {
     "keras_version": "2.12.0",
     "backend": "tensorflow",
@@ -13,29 +13,165 @@
           {
             "class_name": "InputLayer",
             "config": {
-              "batch_input_shape": [null, 224, 224, 3],
+              "batch_input_shape": [
+                null,
+                224,
+                224,
+                3
+              ],
               "dtype": "float32",
               "sparse": false,
               "name": "input_1"
             }
           },
           {
+            "class_name": "Conv2D",
+            "config": {
+              "name": "conv2d",
+              "trainable": true,
+              "dtype": "float32",
+              "filters": 32,
+              "kernel_size": [
+                3,
+                3
+              ],
+              "strides": [
+                1,
+                1
+              ],
+              "padding": "valid",
+              "activation": "relu",
+              "use_bias": true
+            }
+          },
+          {
+            "class_name": "MaxPooling2D",
+            "config": {
+              "name": "max_pooling2d",
+              "trainable": true,
+              "dtype": "float32",
+              "pool_size": [
+                2,
+                2
+              ],
+              "padding": "valid",
+              "strides": [
+                2,
+                2
+              ]
+            }
+          },
+          {
+            "class_name": "Conv2D",
+            "config": {
+              "name": "conv2d_1",
+              "trainable": true,
+              "dtype": "float32",
+              "filters": 64,
+              "kernel_size": [
+                3,
+                3
+              ],
+              "strides": [
+                1,
+                1
+              ],
+              "padding": "valid",
+              "activation": "relu",
+              "use_bias": true
+            }
+          },
+          {
+            "class_name": "MaxPooling2D",
+            "config": {
+              "name": "max_pooling2d_1",
+              "trainable": true,
+              "dtype": "float32",
+              "pool_size": [
+                2,
+                2
+              ],
+              "padding": "valid",
+              "strides": [
+                2,
+                2
+              ]
+            }
+          },
+          {
+            "class_name": "Conv2D",
+            "config": {
+              "name": "conv2d_2",
+              "trainable": true,
+              "dtype": "float32",
+              "filters": 128,
+              "kernel_size": [
+                3,
+                3
+              ],
+              "strides": [
+                1,
+                1
+              ],
+              "padding": "valid",
+              "activation": "relu",
+              "use_bias": true
+            }
+          },
+          {
+            "class_name": "MaxPooling2D",
+            "config": {
+              "name": "max_pooling2d_2",
+              "trainable": true,
+              "dtype": "float32",
+              "pool_size": [
+                2,
+                2
+              ],
+              "padding": "valid",
+              "strides": [
+                2,
+                2
+              ]
+            }
+          },
+          {
+            "class_name": "Flatten",
+            "config": {
+              "name": "flatten",
+              "trainable": true,
+              "dtype": "float32"
+            }
+          },
+          {
             "class_name": "Dense",
             "config": {
-              "name": "predictions",
+              "name": "dense",
+              "trainable": true,
+              "dtype": "float32",
+              "units": 128,
+              "activation": "relu",
+              "use_bias": true
+            }
+          },
+          {
+            "class_name": "Dropout",
+            "config": {
+              "name": "dropout",
+              "trainable": true,
+              "dtype": "float32",
+              "rate": 0.5
+            }
+          },
+          {
+            "class_name": "Dense",
+            "config": {
+              "name": "dense_1",
               "trainable": true,
               "dtype": "float32",
               "units": 1,
               "activation": "sigmoid",
-              "use_bias": true,
-              "kernel_initializer": {
-                "class_name": "GlorotUniform",
-                "config": {"seed": null}
-              },
-              "bias_initializer": {
-                "class_name": "Zeros",
-                "config": {}
-              }
+              "use_bias": true
             }
           }
         ]
@@ -44,16 +180,89 @@
   },
   "weightsManifest": [
     {
-      "paths": ["group1-shard1of1.bin"],
+      "paths": [
+        "weights.bin"
+      ],
       "weights": [
         {
-          "name": "predictions/kernel",
-          "shape": [150528, 1],
+          "name": "conv2d/kernel",
+          "shape": [
+            3,
+            3,
+            3,
+            32
+          ],
           "dtype": "float32"
         },
         {
-          "name": "predictions/bias",
-          "shape": [1],
+          "name": "conv2d/bias",
+          "shape": [
+            32
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "conv2d_1/kernel",
+          "shape": [
+            3,
+            3,
+            32,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "conv2d_1/bias",
+          "shape": [
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "conv2d_2/kernel",
+          "shape": [
+            3,
+            3,
+            64,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "conv2d_2/bias",
+          "shape": [
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense/kernel",
+          "shape": [
+            86528,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense/bias",
+          "shape": [
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense_1/kernel",
+          "shape": [
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "name": "dense_1/bias",
+          "shape": [
+            1
+          ],
           "dtype": "float32"
         }
       ]
