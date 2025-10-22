@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Github, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import heroFarm from "@/assets/hero-farm.jpg";
 
 const About = () => {
@@ -135,10 +135,6 @@ const About = () => {
               <Button variant="outline" size="lg" className="bg-white/10 hover:bg-white/20 text-white border-white/20">
                 <Mail className="h-4 w-4 mr-2" />
                 Contact Us
-              </Button>
-              <Button variant="outline" size="lg" className="bg-white/10 hover:bg-white/20 text-white border-white/20">
-                <Github className="h-4 w-4 mr-2" />
-                View on GitHub
               </Button>
             </div>
           </CardContent>
