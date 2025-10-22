@@ -4,12 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Download, TrendingUp } from "lucide-react";
 import { exportCSVMobile } from "@/utils/mobile";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { PHChartMetrics } from "@/components/charts/PHChartMetrics";
 import { phHistory, airTempHistory, tdsHistory, humidityHistory } from "@/lib/mockData";
@@ -77,7 +72,12 @@ const Metrics = () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     try {
-      const dataToExport = currentConfig.data.slice(-days * 24);
+      // Export all available data if days is greater than available data
+      const maxAvailableDays = Math.ceil(currentConfig.data.length / 24);
+      const actualDays = Math.min(days, maxAvailableDays);
+      const dataToExport = days >= maxAvailableDays ? currentConfig.data : currentConfig.data.slice(-days * 24);
+      
+      console.log(`Exporting ${dataToExport.length} data points (${actualDays} days of data)`);
       
       // Generate CSV content with proper formatting and BOM for Excel compatibility
       const headers = ["Timestamp", "Metric", "Value", "Unit"];
@@ -95,11 +95,11 @@ const Metrics = () => {
       
       // Add BOM for proper Excel UTF-8 handling
       const csvContent = '\uFEFF' + csvRows.join("\n");
-      const filename = `AeroGrowth_${selectedMetric}_${days}day_metrics_${new Date().toISOString().split("T")[0]}.csv`;
+      const filename = `AeroGrowth_${selectedMetric}_AllData_${new Date().toISOString().split("T")[0]}.csv`;
       const title = 'AeroGrowth Metrics Export';
-      const description = `${selectedMetric} metrics data for ${days} day${days > 1 ? 's' : ''} - AeroGrowth Vertical Farming`;
+      const description = `${selectedMetric} complete metrics dataset (${dataToExport.length} data points) - AeroGrowth Vertical Farming`;
       
-      console.log(`Exporting CSV: ${filename}`);
+      console.log(`Exporting CSV: ${filename} with ${dataToExport.length} records`);
       
       // Use the improved mobile CSV export function
       const result = await exportCSVMobile(csvContent, filename, title, description);
@@ -108,7 +108,7 @@ const Metrics = () => {
         console.log('CSV export successful:', result.message);
         // Use a more subtle success message for mobile
         if (isMobileDevice()) {
-          toast.success('CSV file ready for download/share!');
+          toast.success(`CSV exported! ${dataToExport.length} records ready for download/share`);
         } else {
           toast.success(result.message);
         }
@@ -129,16 +129,20 @@ const Metrics = () => {
     }
   };
 
-  // Wrapper function to handle CSV export with navigation bypass
-  const handleCSVExportClick = (days: number) => {
-    console.log(`CSV export button clicked for ${days} days`);
+  // Wrapper function to handle CSV export with navigation bypass - exports all available data
+  const handleCSVExportClick = () => {
+    console.log('Direct CSV export button clicked - exporting all available data');
     
     // Temporarily disable navigation prevention for this action
     const body = document.body;
     body.classList.add('csv-export-active');
     
-    // Execute the export
-    handleExport(days).finally(() => {
+    // Export all available data (full dataset)
+    const allDataDays = Math.ceil(currentConfig.data.length / 24); // Calculate total days of data available
+    console.log(`Exporting ${allDataDays} days of data (${currentConfig.data.length} data points)`);
+    
+    // Execute the export with all available data
+    handleExport(allDataDays).finally(() => {
       // Re-enable navigation prevention after a delay
       setTimeout(() => {
         body.classList.remove('csv-export-active');
@@ -156,108 +160,22 @@ const Metrics = () => {
               Deep analytics and historical trends
             </p>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                disabled={isExporting}
-                className="min-h-[44px] min-w-[120px] touch-manipulation csv-export-button"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-                data-csv-export="true"
-                data-interactive="true"
-              >
-                <Download className={`h-4 w-4 mr-2 ${isExporting ? 'animate-spin' : ''}`} />
-                {isExporting ? 'Exporting...' : 'Export CSV'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              className="min-w-[160px] csv-export-menu"
-              sideOffset={8}
-              data-csv-menu="true"
-              data-interactive="true"
-            >
-              <DropdownMenuItem 
-                onSelect={(e) => {
-                  e.preventDefault();
-                  console.log('CSV Export 1 Day selected');
-                  handleCSVExportClick(1);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('CSV Export 1 Day clicked');
-                  handleCSVExportClick(1);
-                }} 
-                disabled={isExporting}
-                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
-                data-csv-item="1day"
-                data-interactive="true"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export 1 Day
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onSelect={(e) => {
-                  e.preventDefault();
-                  console.log('CSV Export 2 Days selected');
-                  handleCSVExportClick(2);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('CSV Export 2 Days clicked');
-                  handleCSVExportClick(2);
-                }} 
-                disabled={isExporting}
-                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
-                data-csv-item="2days"
-                data-interactive="true"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export 2 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onSelect={(e) => {
-                  e.preventDefault();
-                  console.log('CSV Export 7 Days selected');
-                  handleCSVExportClick(7);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('CSV Export 7 Days clicked');
-                  handleCSVExportClick(7);
-                }} 
-                disabled={isExporting}
-                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
-                data-csv-item="7days"
-                data-interactive="true"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export 7 Days
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onSelect={(e) => {
-                  e.preventDefault();
-                  console.log('CSV Export 1 Month selected');
-                  handleCSVExportClick(30);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('CSV Export 1 Month clicked');
-                  handleCSVExportClick(30);
-                }} 
-                disabled={isExporting}
-                className="min-h-[44px] touch-manipulation cursor-pointer csv-export-item"
-                data-csv-item="1month"
-                data-interactive="true"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export 1 Month
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Direct CSV Export clicked');
+              handleCSVExportClick();
+            }}
+            disabled={isExporting}
+            className="min-h-[44px] min-w-[120px] touch-manipulation csv-export-button"
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+            data-csv-export="true"
+            data-interactive="true"
+          >
+            <Download className={`h-4 w-4 mr-2 ${isExporting ? 'animate-spin' : ''}`} />
+            {isExporting ? 'Exporting...' : 'Export CSV'}
+          </Button>
         </div>
 
         {/* Parameter Selector */}
