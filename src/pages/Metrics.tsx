@@ -177,9 +177,15 @@ const Metrics = () => {
               data-interactive="true"
             >
               <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  console.log('CSV Export 1 Day selected');
+                  handleCSVExportClick(1);
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  console.log('CSV Export 1 Day clicked');
                   handleCSVExportClick(1);
                 }} 
                 disabled={isExporting}
@@ -191,9 +197,15 @@ const Metrics = () => {
                 Export 1 Day
               </DropdownMenuItem>
               <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  console.log('CSV Export 2 Days selected');
+                  handleCSVExportClick(2);
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  console.log('CSV Export 2 Days clicked');
                   handleCSVExportClick(2);
                 }} 
                 disabled={isExporting}
@@ -205,9 +217,15 @@ const Metrics = () => {
                 Export 2 Days
               </DropdownMenuItem>
               <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  console.log('CSV Export 7 Days selected');
+                  handleCSVExportClick(7);
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  console.log('CSV Export 7 Days clicked');
                   handleCSVExportClick(7);
                 }} 
                 disabled={isExporting}
@@ -219,9 +237,15 @@ const Metrics = () => {
                 Export 7 Days
               </DropdownMenuItem>
               <DropdownMenuItem 
+                onSelect={(e) => {
+                  e.preventDefault();
+                  console.log('CSV Export 1 Month selected');
+                  handleCSVExportClick(30);
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  console.log('CSV Export 1 Month clicked');
                   handleCSVExportClick(30);
                 }} 
                 disabled={isExporting}
@@ -242,16 +266,64 @@ const Metrics = () => {
             <CardTitle className="text-lg">Select Parameter</CardTitle>
           </CardHeader>
           <CardContent className="flex gap-4 flex-wrap">
-            <Select value={selectedMetric} onValueChange={(v) => setSelectedMetric(v as MetricType)}>
-              <SelectTrigger className="w-full md:w-[200px]">
+            <Select 
+              value={selectedMetric} 
+              onValueChange={(v) => {
+                console.log('Parameter selected:', v);
+                setSelectedMetric(v as MetricType);
+              }}
+            >
+              <SelectTrigger 
+                className="w-full md:w-[200px] min-h-[44px] touch-manipulation"
+                data-interactive="true"
+                data-select-trigger="true"
+              >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pH">pH Level</SelectItem>
-                <SelectItem value="air_temp">Air Temperature</SelectItem>
-                <SelectItem value="water_temp">Water Temperature</SelectItem>
-                <SelectItem value="tds">TDS</SelectItem>
-                <SelectItem value="humidity">Humidity</SelectItem>
+              <SelectContent 
+                data-interactive="true"
+                data-select-content="true"
+              >
+                <SelectItem 
+                  value="pH"
+                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  data-interactive="true"
+                  data-select-item="true"
+                >
+                  pH Level
+                </SelectItem>
+                <SelectItem 
+                  value="air_temp"
+                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  data-interactive="true"
+                  data-select-item="true"
+                >
+                  Air Temperature
+                </SelectItem>
+                <SelectItem 
+                  value="water_temp"
+                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  data-interactive="true"
+                  data-select-item="true"
+                >
+                  Water Temperature
+                </SelectItem>
+                <SelectItem 
+                  value="tds"
+                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  data-interactive="true"
+                  data-select-item="true"
+                >
+                  TDS
+                </SelectItem>
+                <SelectItem 
+                  value="humidity"
+                  className="min-h-[44px] touch-manipulation cursor-pointer"
+                  data-interactive="true"
+                  data-select-item="true"
+                >
+                  Humidity
+                </SelectItem>
               </SelectContent>
             </Select>
           </CardContent>

@@ -56,6 +56,42 @@ export const preventAccidentalNavigation = (): void => {
         return;
       }
       
+      // Skip all prevention if any dropdown is open
+      const hasOpenDropdown = document.querySelector('[data-state="open"]') ||
+                             document.querySelector('[data-radix-dropdown-content]') ||
+                             document.querySelector('[data-radix-select-content]') ||
+                             document.querySelector('.csv-export-menu') ||
+                             document.querySelector('.select-content');
+      
+      if (hasOpenDropdown) {
+        console.log('Dropdown is open - allowing all clicks');
+        return;
+      }
+      
+      // Check if this is any Radix UI component - allow all Radix interactions
+      const isRadixComponent = target.closest('[data-radix-dropdown-trigger]') ||
+                              target.closest('[data-radix-dropdown-content]') ||
+                              target.closest('[data-radix-dropdown-item]') ||
+                              target.closest('[data-radix-select-trigger]') ||
+                              target.closest('[data-radix-select-content]') ||
+                              target.closest('[data-radix-select-item]') ||
+                              target.closest('[data-radix-select-viewport]') ||
+                              target.closest('[data-radix-dialog-trigger]') ||
+                              target.closest('[data-radix-dialog-content]') ||
+                              target.hasAttribute('data-radix-dropdown-trigger') ||
+                              target.hasAttribute('data-radix-dropdown-content') ||
+                              target.hasAttribute('data-radix-dropdown-item') ||
+                              target.hasAttribute('data-radix-select-trigger') ||
+                              target.hasAttribute('data-radix-select-content') ||
+                              target.hasAttribute('data-radix-select-item') ||
+                              target.hasAttribute('data-radix-select-viewport') ||
+                              target.hasAttribute('data-state');
+      
+      if (isRadixComponent) {
+        console.log('Radix UI component detected - allowing all interactions');
+        return; // Let all Radix UI interactions proceed normally
+      }
+      
       // Always allow clicks on interactive elements - comprehensive list
       const isInteractive = target.closest(`
         button, 
@@ -66,25 +102,21 @@ export const preventAccidentalNavigation = (): void => {
         [role="button"], 
         [role="menuitem"],
         [role="option"],
+        [role="listbox"],
+        [role="combobox"],
         [tabindex], 
         .card, 
         .modal, 
         nav, 
         [onclick], 
         .mobile-menu-button,
-        [data-radix-dropdown-trigger],
-        [data-radix-dropdown-content],
-        [data-radix-dropdown-item],
-        [data-radix-select-trigger],
-        [data-radix-select-content],
-        [data-radix-select-item],
-        [data-radix-dialog-trigger],
-        [data-radix-dialog-content],
-        [data-state],
         [data-interactive],
         [data-csv-export],
         [data-csv-menu],
         [data-csv-item],
+        [data-select-trigger],
+        [data-select-content],
+        [data-select-item],
         .dropdown-menu,
         .select-content,
         .select-item,
@@ -109,18 +141,18 @@ export const preventAccidentalNavigation = (): void => {
                                   target.closest('.csv-export-item') ||
                                   target.tagName === 'BUTTON' ||
                                   target.tagName === 'A' ||
-                                  target.hasAttribute('data-radix-dropdown-trigger') ||
-                                  target.hasAttribute('data-radix-dropdown-item') ||
-                                  target.hasAttribute('data-radix-select-trigger') ||
-                                  target.hasAttribute('data-radix-select-item') ||
-                                  target.hasAttribute('data-state') ||
                                   target.hasAttribute('data-interactive') ||
                                   target.hasAttribute('data-csv-export') ||
                                   target.hasAttribute('data-csv-menu') ||
                                   target.hasAttribute('data-csv-item') ||
+                                  target.hasAttribute('data-select-trigger') ||
+                                  target.hasAttribute('data-select-content') ||
+                                  target.hasAttribute('data-select-item') ||
                                   target.getAttribute('role') === 'button' ||
                                   target.getAttribute('role') === 'menuitem' ||
-                                  target.getAttribute('role') === 'option';
+                                  target.getAttribute('role') === 'option' ||
+                                  target.getAttribute('role') === 'listbox' ||
+                                  target.getAttribute('role') === 'combobox';
       
       if (hasInteractiveClass) {
         console.log('Interactive class detected - allowing');
@@ -133,10 +165,11 @@ export const preventAccidentalNavigation = (): void => {
                               target.closest('[data-csv-menu]') ||
                               target.closest('.dropdown-menu') ||
                               target.closest('.select-content') ||
-                              target.closest('.csv-export-menu');
+                              target.closest('.csv-export-menu') ||
+                              target.closest('[data-radix-select-viewport]');
       
       if (isInsideDropdown) {
-        console.log('Inside dropdown - allowing');
+        console.log('Inside dropdown/select - allowing');
         return; // Let the click proceed normally
       }
       
@@ -153,7 +186,9 @@ export const preventAccidentalNavigation = (): void => {
                           !target.className.includes('grid') &&
                           !target.className.includes('dropdown') &&
                           !target.className.includes('select') &&
-                          !target.className.includes('menu'));
+                          !target.className.includes('menu') &&
+                          !target.hasAttribute('data-radix-dropdown-content') &&
+                          !target.hasAttribute('data-radix-select-content'));
       
       // Only prevent double-clicks on truly empty areas
       if (isEmptyArea) {
