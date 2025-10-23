@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import { LoadingScreen } from "./components/LoadingScreen";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { initializeMobileApp } from "./mobile-init";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -49,13 +50,22 @@ const NavigationGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppContent = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [hasShownLoadingScreen, setHasShownLoadingScreen] = useState(false);
   const { isAuthenticated, login } = useAuth();
 
   useEffect(() => {
     // Initialize mobile app features
     initializeMobileApp();
   }, []);
+
+  // Show loading screen only on first visit
+  const shouldShowLoadingScreen = isInitialLoading && !hasShownLoadingScreen;
+
+  const handleLoadingComplete = () => {
+    setIsInitialLoading(false);
+    setHasShownLoadingScreen(true);
+  };
 
   if (!isAuthenticated) {
     return <Login onLogin={login} />;
@@ -64,23 +74,27 @@ const AppContent = () => {
   return (
     <BrowserRouter>
       <NavigationGuard>
-        <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+        {shouldShowLoadingScreen && (
+          <LoadingScreen onLoadingComplete={handleLoadingComplete} />
+        )}
         <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-white">
-          {!isLoading && <Header />}
+          <Header />
           <main className="flex-1 main-content">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/metrics" element={<Metrics />} />
-              <Route path="/pest-monitoring" element={<PestMonitoring />} />
-              <Route path="/plant-analysis" element={<PlantAnalysis />} />
-              <Route path="/consultation" element={<Consultation />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/about" element={<About />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/metrics" element={<Metrics />} />
+                <Route path="/pest-monitoring" element={<PestMonitoring />} />
+                <Route path="/plant-analysis" element={<PlantAnalysis />} />
+                <Route path="/consultation" element={<Consultation />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/about" element={<About />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorBoundary>
           </main>
           <Footer />
         </div>

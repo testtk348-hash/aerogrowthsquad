@@ -47,7 +47,7 @@ const Settings = () => {
                 <div className="space-y-0.5">
                   <Label htmlFor="auto-refresh">Auto Refresh</Label>
                   <p className="text-sm text-muted-foreground">
-                    Automatically update metrics every 10 seconds
+                    Automatically update metrics every 2 seconds
                   </p>
                 </div>
                 <Switch id="auto-refresh" defaultChecked />

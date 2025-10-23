@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { SensorReading } from "@/lib/mockData";
+import { SensorReading } from "@/services/sensorApi";
 
 interface TemperatureChartProps {
   airTemp: SensorReading[];

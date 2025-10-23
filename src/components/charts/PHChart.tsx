@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { SensorReading } from "@/lib/mockData";
+import { SensorReading } from "@/services/sensorApi";
 
 interface PHChartProps {
   data: SensorReading[];

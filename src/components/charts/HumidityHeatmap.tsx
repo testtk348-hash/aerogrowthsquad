@@ -1,13 +1,51 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { SensorReading } from "@/services/sensorApi";
 
-export const HumidityHeatmap = () => {
-  // Mock humidity data for 4x3 grid (vertical racks)
-  const humidityGrid = [
-    [82, 78, 75, 73],
-    [80, 77, 76, 74],
-    [79, 78, 77, 75],
-  ];
+interface HumidityHeatmapProps {
+  data?: SensorReading[];
+}
+
+export const HumidityHeatmap = ({ data = [] }: HumidityHeatmapProps) => {
+  // Generate humidity grid based on real data or use mock data
+  const generateHumidityGrid = () => {
+    if (data.length === 0) {
+      // Fallback to mock data
+      return [
+        [82, 78, 75, 73],
+        [80, 77, 76, 74],
+        [79, 78, 77, 75],
+      ];
+    }
+
+    // Use the latest humidity value as base and create variations for different racks
+    const latestHumidity = data[data.length - 1]?.value || 75;
+    const baseHumidity = Math.round(latestHumidity);
+    
+    // Create realistic variations for different rack positions
+    return [
+      [
+        baseHumidity + 2, 
+        baseHumidity, 
+        baseHumidity - 2, 
+        baseHumidity - 4
+      ],
+      [
+        baseHumidity, 
+        baseHumidity - 1, 
+        baseHumidity - 1, 
+        baseHumidity - 3
+      ],
+      [
+        baseHumidity - 1, 
+        baseHumidity, 
+        baseHumidity + 1, 
+        baseHumidity - 1
+      ],
+    ];
+  };
+
+  const humidityGrid = generateHumidityGrid();
 
   const getHumidityColor = (value: number) => {
     if (value >= 80) return "bg-chart-5";

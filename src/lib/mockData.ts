@@ -12,10 +12,10 @@ export interface SensorReading {
 export interface LatestMetrics {
   timestamp: string;
   pH: number;
-  air_temp_c: number;
-  water_temp_c: number;
-  tds_ppm: number;
-  humidity_pct: number;
+  airTemp: number;
+  waterTemp: number;
+  tds: number;
+  humidity: number;
   dissolved_oxygen_mg_l: number;
   pump_status: "on" | "off";
 }
@@ -27,7 +27,7 @@ export const generateHistoricalData = (
 ): SensorReading[] => {
   const data: SensorReading[] = [];
   const now = new Date();
-  
+
   for (let i = hours; i >= 0; i--) {
     const ts = new Date(now.getTime() - i * 60 * 60 * 1000);
     const randomVariance = (Math.random() - 0.5) * variance;
@@ -36,21 +36,23 @@ export const generateHistoricalData = (
       value: parseFloat((baseValue + randomVariance).toFixed(2)),
     });
   }
-  
+
   return data;
 };
 
 export const getLatestMetrics = (): LatestMetrics => {
-  return {
+  const metrics = {
     timestamp: new Date().toISOString(),
-    pH: 6.2 + (Math.random() - 0.5) * 0.4,
-    air_temp_c: 26 + (Math.random() - 0.5) * 2,
-    water_temp_c: 21 + (Math.random() - 0.5) * 1,
-    tds_ppm: 420 + (Math.random() - 0.5) * 40,
-    humidity_pct: 78 + (Math.random() - 0.5) * 10,
-    dissolved_oxygen_mg_l: 6.5 + (Math.random() - 0.5) * 1,
-    pump_status: Math.random() > 0.2 ? "on" : "off",
+    pH: parseFloat((6.2 + (Math.random() - 0.5) * 0.4).toFixed(2)),
+    airTemp: parseFloat((26 + (Math.random() - 0.5) * 2).toFixed(1)),
+    waterTemp: parseFloat((21 + (Math.random() - 0.5) * 1).toFixed(1)),
+    tds: parseFloat((420 + (Math.random() - 0.5) * 40).toFixed(0)),
+    humidity: parseFloat((78 + (Math.random() - 0.5) * 10).toFixed(1)),
+    dissolved_oxygen_mg_l: parseFloat((6.5 + (Math.random() - 0.5) * 1).toFixed(1)),
+    pump_status: (Math.random() > 0.2 ? "on" : "off") as "on" | "off",
   };
+
+  return metrics;
 };
 
 export const phHistory = generateHistoricalData(48, 6.3, 0.6);

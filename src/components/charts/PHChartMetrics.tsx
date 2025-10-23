@@ -38,7 +38,7 @@ export const PHChartMetrics = ({ data, label, unit }: PHChartMetricsProps) => {
                 border: "1px solid hsl(var(--border))",
                 borderRadius: "8px",
               }}
-              formatter={(value: number) => [value.toFixed(2) + " " + unit, label]}
+              formatter={(value: number) => [(value ?? 0).toFixed(2) + " " + unit, label]}
             />
             {label === "pH Level" && (
               <>

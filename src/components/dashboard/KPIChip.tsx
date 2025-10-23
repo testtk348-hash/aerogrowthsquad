@@ -11,6 +11,7 @@ interface KPIChipProps {
   delta?: number;
   status: "good" | "warning" | "danger";
   sparklineData?: { value: number }[];
+  stats?: { min: number; max: number; avg: number };
 }
 
 export const KPIChip = ({
@@ -21,6 +22,7 @@ export const KPIChip = ({
   delta,
   status,
   sparklineData = [],
+  stats,
 }: KPIChipProps) => {
   const statusColors = {
     good: "border-success/50 bg-success/5",
@@ -75,6 +77,24 @@ export const KPIChip = ({
                 />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+        )}
+        {stats && (
+          <div className="mt-3 pt-3 border-t border-border/50">
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <div className="font-semibold text-muted-foreground">Min</div>
+                <div className="text-foreground">{typeof stats.min === 'number' ? stats.min.toFixed(1) : '0'}</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold text-muted-foreground">Avg</div>
+                <div className="text-foreground">{typeof stats.avg === 'number' ? stats.avg.toFixed(1) : '0'}</div>
+              </div>
+              <div className="text-center">
+                <div className="font-semibold text-muted-foreground">Max</div>
+                <div className="text-foreground">{typeof stats.max === 'number' ? stats.max.toFixed(1) : '0'}</div>
+              </div>
+            </div>
           </div>
         )}
       </div>

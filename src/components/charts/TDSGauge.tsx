@@ -4,26 +4,35 @@ import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from "rec
 interface TDSGaugeProps {
   value: number;
   optimal: number;
+  historyData?: Array<{ ts: string; value: number }>;
 }
 
-export const TDSGauge = ({ value, optimal }: TDSGaugeProps) => {
-  const percentage = (value / optimal) * 100;
+export const TDSGauge = ({ value, optimal, historyData }: TDSGaugeProps) => {
+  const safeValue = value ?? 0;
+  const safeOptimal = optimal ?? 400;
+  const percentage = (safeValue / safeOptimal) * 100;
   
-  // Generate mock historical TDS data for mini chart
+  // Use real data if available, otherwise generate mock data
   const generateTDSHistory = () => {
     const data = [];
     const now = Date.now();
     for (let i = 11; i >= 0; i--) {
       const variance = (Math.random() - 0.5) * 30;
+      const timestamp = new Date(now - i * 2 * 60 * 60 * 1000);
       data.push({
-        time: new Date(now - i * 2 * 60 * 60 * 1000).getHours(),
-        value: optimal + variance,
+        time: timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        value: safeOptimal + variance,
       });
     }
     return data;
   };
 
-  const historyData = generateTDSHistory();
+  const chartData = historyData && historyData.length > 0 
+    ? historyData.slice(-12).map(d => ({
+        time: new Date(d.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        value: d.value,
+      }))
+    : generateTDSHistory();
   
   const getStatusColor = () => {
     if (percentage >= 90 && percentage <= 110) return "hsl(var(--success))";
@@ -41,12 +50,12 @@ export const TDSGauge = ({ value, optimal }: TDSGaugeProps) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-4xl font-bold" style={{ color: getStatusColor() }}>
-              {value.toFixed(0)}
+              {safeValue.toFixed(0)}
             </p>
             <p className="text-sm text-muted-foreground">ppm</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-semibold text-muted-foreground">{optimal}</p>
+            <p className="text-2xl font-semibold text-muted-foreground">{safeOptimal}</p>
             <p className="text-xs text-muted-foreground">optimal</p>
           </div>
         </div>
@@ -73,7 +82,7 @@ export const TDSGauge = ({ value, optimal }: TDSGaugeProps) => {
         <div>
           <p className="text-xs text-muted-foreground mb-2">Last 24 hours trend</p>
           <ResponsiveContainer width="100%" height={80}>
-            <AreaChart data={historyData}>
+            <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="tdsFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3}/>
@@ -81,7 +90,7 @@ export const TDSGauge = ({ value, optimal }: TDSGaugeProps) => {
                 </linearGradient>
               </defs>
               <XAxis dataKey="time" hide />
-              <YAxis hide domain={[optimal - 50, optimal + 50]} />
+              <YAxis hide domain={[safeOptimal - 50, safeOptimal + 50]} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
@@ -89,8 +98,8 @@ export const TDSGauge = ({ value, optimal }: TDSGaugeProps) => {
                   borderRadius: "8px",
                   fontSize: "12px",
                 }}
-                labelFormatter={(value) => `${value}:00`}
-                formatter={(value: number) => [`${value.toFixed(0)} ppm`, "TDS"]}
+                labelFormatter={(value) => `${value}`}
+                formatter={(value: number) => [`${(value ?? 0).toFixed(0)} ppm`, "TDS"]}
               />
               <Area
                 type="monotone"

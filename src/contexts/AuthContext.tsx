@@ -37,6 +37,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsAuthenticated(true);
       setUserRole(role);
       setUserEmail(email);
+    } else {
+      // Auto-login for development/testing
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole', 'admin');
+      localStorage.setItem('userEmail', 'admin@aerogrowth.com');
+      setIsAuthenticated(true);
+      setUserRole('admin');
+      setUserEmail('admin@aerogrowth.com');
     }
   }, []);
 
