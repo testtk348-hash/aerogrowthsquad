@@ -10,6 +10,7 @@ import { HumidityHeatmap } from "@/components/charts/HumidityHeatmap";
 import { CurrentlyGrownCrops } from "@/components/dashboard/CurrentlyGrownCrops";
 import { WhatCanBeGrown } from "@/components/dashboard/WhatCanBeGrown";
 import { sensorApi, type LatestMetrics, type Last30Data } from "@/services/sensorApi";
+import { dataManager } from "@/services/dataManager";
 import { getLatestMetrics, getStatusColor, mockAlerts, phHistory, airTempHistory, waterTempHistory, tdsHistory, humidityHistory } from "@/lib/mockData";
 
 const Dashboard = () => {
@@ -62,12 +63,14 @@ const Dashboard = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [chartDataLoaded, setChartDataLoaded] = useState(false);
 
+  // Efficient fetching: Only get latest data (1 read instead of 30)
   const fetchLatestData = async () => {
     try {
       setIsRefreshing(true);
       
-      // First test API health
+      // First test API health using efficient endpoint
       const healthCheck = await sensorApi.testApiHealth();
       console.log('🏥 API Health Check:', healthCheck);
       
@@ -78,7 +81,7 @@ const Dashboard = () => {
       const data = await sensorApi.getLatestData();
       setMetrics(data);
       setError(null);
-      console.log('✅ Dashboard Latest Data Updated:', {
+      console.log('✅ Dashboard Latest Data Updated (EFFICIENT):', {
         pH: data.pH,
         airTemp: data.airTemp,
         waterTemp: data.waterTemp,
@@ -87,6 +90,11 @@ const Dashboard = () => {
         pump: data.pump_status,
         timestamp: data.timestamp
       });
+
+      // Update chart data from rolling data (no additional API calls!)
+      if (chartDataLoaded) {
+        updateChartDataFromRolling();
+      }
     } catch (err) {
       console.error('❌ Failed to fetch latest data:', err);
       setError(`API Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
@@ -97,11 +105,65 @@ const Dashboard = () => {
     }
   };
 
+  // Update chart data from rolling data (efficient - no API calls)
+  const updateChartDataFromRolling = () => {
+    try {
+      const rollingData = sensorApi.getRollingData();
+      if (rollingData.length === 0) return;
+
+      // Take last 30 data points and reverse for ascending order (oldest to newest)
+      const last30 = rollingData.slice(0, 30).reverse();
+      
+      // Helper function to parse API timestamp format
+      const parseApiTimestamp = (timestamp: string) => {
+        const parts = timestamp.split(' ');
+        const datePart = parts[0].replace(/:/g, '-');
+        const timePart = parts[1];
+        return `${datePart}T${timePart}`;
+      };
+      
+      // Transform to chart format
+      const updatedChartData: Last30Data = {
+        pH: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.pH
+        })),
+        airTemp: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.airTemp
+        })),
+        waterTemp: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.waterTemp
+        })),
+        tds: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.tds
+        })),
+        humidity: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.humidity
+        })),
+        dissolved_oxygen_mg_l: []
+      };
+
+      setChartData(updatedChartData);
+      console.log('📈 Chart data updated from rolling data (no API call!):', {
+        pH: updatedChartData.pH?.length || 0,
+        totalPoints: rollingData.length
+      });
+    } catch (err) {
+      console.error('Failed to update chart data from rolling:', err);
+    }
+  };
+
+  // Efficient fetching: Get chart data only once on load, then use rolling updates
   const fetchChartData = async () => {
     try {
       const data = await sensorApi.getLast30Data();
       setChartData(data);
-      console.log('📈 Dashboard Chart Data Updated:', {
+      setChartDataLoaded(true);
+      console.log('📈 Dashboard Chart Data Updated (EFFICIENT):', {
         pH: data.pH?.length || 0,
         airTemp: data.airTemp?.length || 0,
         waterTemp: data.waterTemp?.length || 0,
@@ -119,37 +181,74 @@ const Dashboard = () => {
         humidity: humidityHistory,
         dissolved_oxygen_mg_l: []
       });
+      setChartDataLoaded(true);
     }
   };
 
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        // Try to fetch real data, but don't block the UI
-        await Promise.all([fetchLatestData(), fetchChartData()]);
+        console.log('🚀 Loading initial data with EFFICIENT DATA MANAGER');
+        
+        // Initialize data manager (loads last30 + latest data efficiently)
+        const initResult = await dataManager.initialize();
+        if (!initResult.success) {
+          throw new Error(initResult.message);
+        }
+        
+        // Get initial data from data manager
+        const [latestMetrics, chartData] = await Promise.all([
+          dataManager.getLatestMetrics(),
+          dataManager.getChartData()
+        ]);
+        
+        setMetrics(latestMetrics);
+        setChartData(chartData);
+        setChartDataLoaded(true);
+        setError(null);
+        
+        console.log('✅ Initial data loaded via efficient data manager');
       } catch (err) {
         console.error('Failed to load initial data:', err);
         setError('Failed to load dashboard data');
+        // Use fallback mock data
+        setMetrics(getLatestMetrics());
+        setChartData({
+          pH: phHistory,
+          airTemp: airTempHistory,
+          waterTemp: waterTempHistory,
+          tds: tdsHistory,
+          humidity: humidityHistory,
+          dissolved_oxygen_mg_l: []
+        });
+        setChartDataLoaded(true);
       }
     };
 
     // Load data immediately when component mounts
     loadInitialData();
 
-    // Set up intervals for real-time updates
-    const latestDataInterval = setInterval(() => {
-      fetchLatestData().catch(console.error);
-    }, 2000); // Every 2 seconds
+    // Set up efficient polling: ONLY latest data every 30 seconds
+    const latestDataInterval = setInterval(async () => {
+      try {
+        const latestMetrics = await dataManager.refreshLatestData();
+        setMetrics(latestMetrics);
+        
+        // Update charts from rolling data (no additional API calls!)
+        if (chartDataLoaded) {
+          updateChartDataFromRolling();
+        }
+      } catch (err) {
+        console.error('Failed to refresh latest data:', err);
+      }
+    }, 30000); // Every 30 seconds - EFFICIENT!
 
-    const chartDataInterval = setInterval(() => {
-      fetchChartData().catch(console.error);
-    }, 2000); // Every 2 seconds
+    console.log('📊 EFFICIENT POLLING: Only fetching /data/latest every 30s (96.7% reduction in API calls)');
 
     return () => {
       clearInterval(latestDataInterval);
-      clearInterval(chartDataInterval);
     };
-  }, []);
+  }, [chartDataLoaded]);
 
   // Calculate deltas from chart data if available
   const calculateDelta = (current: number, historical: { value: number }[]) => {
@@ -237,6 +336,9 @@ const Dashboard = () => {
               <h1 className="mb-2">System Dashboard</h1>
               <p className="text-muted-foreground">
                 Real-time monitoring of your vertical aeroponics farm
+                <span className="block text-green-600 text-xs mt-1 flex items-center gap-1">
+                  🚀 Efficient Mode: 96.7% fewer API calls
+                </span>
                 {error && (
                   <span className="block text-yellow-600 text-sm mt-1">
                     ⚠️ Using fallback data - {error}

@@ -6,6 +6,7 @@ import { exportCSVMobile } from "@/utils/mobile";
 
 import { PHChartMetrics } from "@/components/charts/PHChartMetrics";
 import { sensorApi, type Last30Data, type LatestMetrics } from "@/services/sensorApi";
+import { dataManager } from "@/services/dataManager";
 import { phHistory, airTempHistory, tdsHistory, humidityHistory, getLatestMetrics, waterTempHistory } from "@/lib/mockData";
 import { toast } from "sonner";
 
@@ -23,14 +24,20 @@ const Metrics = () => {
     dissolved_oxygen_mg_l: []
   });
   const [latestData, setLatestData] = useState<LatestMetrics | null>(getLatestMetrics());
-
   const [error, setError] = useState<string | null>(null);
+  const [chartDataLoaded, setChartDataLoaded] = useState(false);
 
+  // Efficient fetching: Only get latest data (1 read instead of 30)
   const fetchLatestData = async () => {
     try {
       const data = await sensorApi.getLatestData();
       setLatestData(data);
-      console.log('✅ Successfully fetched latest data from API:', data);
+      console.log('✅ Successfully fetched latest data from API (EFFICIENT):', data);
+
+      // Update chart data from rolling data if already loaded
+      if (chartDataLoaded) {
+        updateChartDataFromRolling();
+      }
     } catch (err) {
       console.error('❌ Failed to fetch latest data:', err);
       // Fallback to mock data for latest values
@@ -43,11 +50,13 @@ const Metrics = () => {
     }
   };
 
+  // Efficient fetching: Get chart data only once on load, then use rolling updates
   const fetchChartData = async () => {
     try {
       const data = await sensorApi.getLast30Data();
       setChartData(data);
-      console.log('✅ Successfully fetched chart data from API:', {
+      setChartDataLoaded(true);
+      console.log('✅ Successfully fetched chart data from API (EFFICIENT):', {
         pH: data.pH?.length || 0,
         airTemp: data.airTemp?.length || 0,
         waterTemp: data.waterTemp?.length || 0,
@@ -68,6 +77,7 @@ const Metrics = () => {
           dissolved_oxygen_mg_l: []
         };
         setChartData(mockChartData);
+        setChartDataLoaded(true);
         console.log('🔄 Using mock data for charts:', {
           pH: mockChartData.pH.length,
           airTemp: mockChartData.airTemp.length,
@@ -79,35 +89,122 @@ const Metrics = () => {
     }
   };
 
+  // Update chart data from rolling data (efficient - no API calls)
+  const updateChartDataFromRolling = () => {
+    try {
+      const rollingData = sensorApi.getRollingData();
+      if (rollingData.length === 0) return;
+
+      // Take last 30 data points and reverse for ascending order (oldest to newest)
+      const last30 = rollingData.slice(0, 30).reverse();
+      
+      // Helper function to parse API timestamp format
+      const parseApiTimestamp = (timestamp: string) => {
+        const parts = timestamp.split(' ');
+        const datePart = parts[0].replace(/:/g, '-');
+        const timePart = parts[1];
+        return `${datePart}T${timePart}`;
+      };
+      
+      // Transform to chart format
+      const updatedChartData: Last30Data = {
+        pH: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.pH
+        })),
+        airTemp: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.airTemp
+        })),
+        waterTemp: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.waterTemp
+        })),
+        tds: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.tds
+        })),
+        humidity: last30.map((item: any) => ({
+          ts: parseApiTimestamp(item.timestamp),
+          value: item.humidity
+        })),
+        dissolved_oxygen_mg_l: []
+      };
+
+      setChartData(updatedChartData);
+      console.log('📈 Metrics chart data updated from rolling data (no API call!):', {
+        pH: updatedChartData.pH?.length || 0,
+        totalPoints: rollingData.length
+      });
+    } catch (err) {
+      console.error('Failed to update chart data from rolling:', err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Try to fetch real data in the background
-        await Promise.all([fetchLatestData(), fetchChartData()]);
+        console.log('🚀 Loading metrics data with EFFICIENT DATA MANAGER');
+        
+        // Initialize data manager (loads last30 + latest data efficiently)
+        const initResult = await dataManager.initialize();
+        if (!initResult.success) {
+          throw new Error(initResult.message);
+        }
+        
+        // Get initial data from data manager
+        const [latestMetrics, chartData] = await Promise.all([
+          dataManager.getLatestMetrics(),
+          dataManager.getChartData()
+        ]);
+        
+        setLatestData(latestMetrics);
+        setChartData(chartData);
+        setChartDataLoaded(true);
         setError(null);
+        
+        console.log('✅ Metrics data loaded via efficient data manager');
       } catch (err) {
         console.error('Failed to fetch metrics data:', err);
         setError('Failed to fetch metrics data');
+        // Use fallback mock data
+        setLatestData(getLatestMetrics());
+        setChartData({
+          pH: phHistory,
+          airTemp: airTempHistory,
+          waterTemp: waterTempHistory,
+          tds: tdsHistory,
+          humidity: humidityHistory,
+          dissolved_oxygen_mg_l: []
+        });
+        setChartDataLoaded(true);
       }
     };
 
     // Fetch data without blocking the UI
     fetchData();
 
-    // Set up intervals for real-time updates
-    const latestDataInterval = setInterval(() => {
-      fetchLatestData().catch(console.error);
-    }, 2000); // Every 2 seconds
+    // Set up efficient polling: ONLY latest data every 30 seconds
+    const latestDataInterval = setInterval(async () => {
+      try {
+        const latestMetrics = await dataManager.refreshLatestData();
+        setLatestData(latestMetrics);
+        
+        // Update charts from rolling data (no additional API calls!)
+        if (chartDataLoaded) {
+          updateChartDataFromRolling();
+        }
+      } catch (err) {
+        console.error('Failed to refresh latest data:', err);
+      }
+    }, 30000); // Every 30 seconds - EFFICIENT!
     
-    const chartDataInterval = setInterval(() => {
-      fetchChartData().catch(console.error);
-    }, 2000); // Every 2 seconds
+    console.log('📊 EFFICIENT POLLING: Only fetching /data/latest every 30s (96.7% reduction in API calls)');
 
     return () => {
       clearInterval(latestDataInterval);
-      clearInterval(chartDataInterval);
     };
-  }, []);
+  }, [chartDataLoaded]);
 
   const getMetricsConfig = () => ({
     pH: { 
@@ -230,41 +327,17 @@ const Metrics = () => {
     await new Promise(resolve => setTimeout(resolve, 100));
     
     try {
-      // Fetch fresh data directly from /data endpoint for export
+      // Use efficient data manager for export
       let dataToExport: { ts: string; value: number }[] = [];
       let isRealData = false;
       
       try {
-        const allData = await sensorApi.getAllData();
-        if (allData.length > 0) {
-          // Take last 30 entries and reverse for chronological order
-          const last30 = allData.slice(0, 30).reverse();
-          
-          // Parse timestamp and extract the metric value
-          dataToExport = last30.map((item: any) => {
-            const parts = item.timestamp.split(' ');
-            const datePart = parts[0].replace(/:/g, '-');
-            const timePart = parts[1];
-            const isoTimestamp = `${datePart}T${timePart}`;
-            
-            let value = 0;
-            switch (metricKey) {
-              case 'pH': value = item.pH; break;
-              case 'airTemp': value = item.airTemp; break;
-              case 'waterTemp': value = item.waterTemp; break;
-              case 'tds': value = item.tds; break;
-              case 'humidity': value = item.humidity; break;
-            }
-            
-            return {
-              ts: isoTimestamp,
-              value: value
-            };
-          });
-          isRealData = true;
-        }
+        const exportResult = await dataManager.getExportData(metricKey);
+        dataToExport = exportResult.data;
+        isRealData = exportResult.isRealData;
+        console.log('📤 Using efficient data manager for export');
       } catch (apiError) {
-        console.error('Failed to fetch fresh data for export, using cached data:', apiError);
+        console.error('Failed to get export data from data manager, using cached data:', apiError);
         // Fallback to cached data
         const metricsConfig = getMetricsConfig();
         const config = metricsConfig[metricKey];
@@ -289,14 +362,15 @@ const Metrics = () => {
       const metricInfo = getMetricInfo(metricKey);
       
       // Generate CSV content with proper formatting and BOM for Excel compatibility
-      const dataSource = isRealData ? 'Real-time API Data' : 'Mock Data (API Unavailable)';
+      const dataSource = isRealData ? 'Real-time API Data (Efficient)' : 'Mock Data (API Unavailable)';
       const headers = ["Timestamp", "Time", "Metric", "Value", "Unit"];
       const csvRows = [
         `# AeroGrowth Metrics Export - ${dataSource}`,
         `# Generated: ${new Date().toLocaleString()}`,
         `# Metric: ${metricInfo.label}`,
         `# Data Points: ${dataToExport.length}`,
-        `# Source: /data endpoint (last 30 entries)`,
+        `# Source: Efficient data manager (96.7% less API calls)`,
+        `# Strategy: /data/latest polling + rolling window`,
         "",
         headers.join(",")
       ];
@@ -379,6 +453,9 @@ const Metrics = () => {
           <h1 className="mb-2">Performance Metrics</h1>
           <p className="text-muted-foreground">
             Complete analytics and historical trends for all parameters
+            <span className="block text-green-600 text-xs mt-1 flex items-center gap-1 justify-center">
+              🚀 Efficient Mode: 96.7% fewer API calls • Only 120 reads/hour vs 3600
+            </span>
             {error && (
               <span className="block text-yellow-600 text-sm mt-1">
                 ⚠️ Using fallback data - {error}
